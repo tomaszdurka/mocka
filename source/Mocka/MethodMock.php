@@ -28,13 +28,16 @@ class MethodMock {
     }
 
     /**
-     * @param int             $at
+     * @param int|int[]       $at
      * @param string|\Closure $body
      */
     public function at($at, $body) {
-        $at = (int) $at;
-        $closure = $this->_normalizeBody($body);
-        $this->_orderedClosures[$at] = $closure;
+        $ats = (array) $at;
+        foreach ($ats as $at) {
+            $at = (int) $at;
+            $closure = $this->_normalizeBody($body);
+            $this->_orderedClosures[$at] = $closure;
+        }
     }
 
     /**
