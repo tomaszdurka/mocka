@@ -20,11 +20,11 @@ class $name extends $parentClassName {
     use \\Mocka\\ClassTrait;
 
     public function foo() {
-        return \$this->_callMethod(__METHOD__, func_get_args());
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 
     public function bar() {
-        return \$this->_callMethod(__METHOD__, func_get_args());
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 }
 EOD;
