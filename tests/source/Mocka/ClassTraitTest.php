@@ -5,10 +5,6 @@ use Mocka;
 
 class ClassTraitTest extends \PHPUnit_Framework_TestCase {
 
-    public function setUp() {
-
-    }
-
     public function testCallMockedMethod() {
         $parentClassName = 'MockaMocks\\AbstractClass';
         $classMock = new Mocka\ClassMock($parentClassName);
