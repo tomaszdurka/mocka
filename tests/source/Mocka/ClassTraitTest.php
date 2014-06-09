@@ -6,13 +6,9 @@ use Mocka;
 class ClassTraitTest extends \PHPUnit_Framework_TestCase {
 
     public function testCallMockedMethod() {
-        $parentClassName = 'MockaMocks\\AbstractClass';
-        $classMock = new Mocka\ClassMock($parentClassName);
-        $className = $classMock->getClassName();
-        $classMock->load();
-
+        $mocka = new Mocka();
         /** @var \MockaMocks\AbstractClass $object */
-        $object = new $className();
+        $object = $mocka->mockObject('\MockaMocks\AbstractClass');
         $this->assertNull($object->foo());
         $this->assertSame('foo', $object->bar());
     }

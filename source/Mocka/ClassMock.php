@@ -18,7 +18,7 @@ class ClassMock {
 
     public function __construct($className) {
         $this->_className = $className . uniqid();
-        $parts = explode('\\', $this->_className);
+        $parts = array_filter(explode('\\', $this->_className));
         $this->_name = array_pop($parts);
         $this->_namespace = join('\\', $parts);
         $this->_parentClassName = (string) $className;
