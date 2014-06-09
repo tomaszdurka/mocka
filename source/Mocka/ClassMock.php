@@ -16,6 +16,9 @@ class ClassMock {
     /** @var string */
     private $_parentClassName;
 
+    /** @var MethodMock[] */
+    private $_mockedMethods = array();
+
     /**
      * @param string $className
      */
@@ -52,12 +55,15 @@ class ClassMock {
 
     /**
      * @param array|null $constructorArgs
-     * @return object
+     * @return \Mocka\ClassTrait
      */
     public function newInstance(array $constructorArgs = null) {
         $constructorArgs = (array) $constructorArgs;
         $mockedClassReflection = new \ReflectionClass($this->getClassName());
-        return $mockedClassReflection->newInstanceArgs($constructorArgs);
+        /** @var ClassTrait $instance */
+        $instance = $mockedClassReflection->newInstanceArgs($constructorArgs);
+        $instance->setMockClass($this);
+        return $instance;
     }
 
     /**
@@ -80,6 +86,34 @@ class ClassMock {
         };
         return $class->dump();
     }
+
+    /**
+     * @param string $name
+     * @return MethodMock
+     */
+    public function mockMethod($name) {
+        $this->_mockedMethods[$name] = new MethodMock();
+        return $this->_mockedMethods[$name];
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasMockedMethod($name) {
+        return array_key_exists($name, $this->_mockedMethods);
+    }
+
+    /**
+     * @param string $name
+     * @param array  $arguments
+     * @return mixed
+     */
+    public function callMockedMethod($name, $arguments) {
+        $method = $this->_mockedMethods[$name];
+        return $method->invoke($arguments);
+    }
+
 
     private function _load() {
         $code = $this->generateCode();
