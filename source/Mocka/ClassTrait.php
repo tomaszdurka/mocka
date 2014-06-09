@@ -18,7 +18,7 @@ trait ClassTrait {
 
     /**
      * @param string $methodName
-     * @param array $arguments
+     * @param array  $arguments
      * @return mixed
      */
     public function __call($methodName, $arguments) {
@@ -27,7 +27,7 @@ trait ClassTrait {
 
     /**
      * @param string $name
-     * @param array $arguments
+     * @param array  $arguments
      * @return mixed
      */
     private function _callMethod($name, array $arguments) {
@@ -51,12 +51,11 @@ trait ClassTrait {
 
     /**
      * @param string $name
-     * @param array $arguments
+     * @param array  $arguments
      * @return mixed
      */
     private function _callMockedMethod($name, $arguments) {
         $method = $this->_mockedMethods[$name];
         return $method->invoke($arguments);
     }
-
 }
