@@ -22,14 +22,17 @@ class MethodMock {
 
     /**
      * @param mixed|\Closure $body
+     * @return static
      */
     public function set($body) {
         $this->_defaultClosure = $this->_normalizeBody($body);
+        return $this;
     }
 
     /**
      * @param int|int[]       $at
      * @param string|\Closure $body
+     * @return static
      */
     public function at($at, $body) {
         $ats = (array) $at;
@@ -38,6 +41,7 @@ class MethodMock {
             $closure = $this->_normalizeBody($body);
             $this->_orderedClosures[$at] = $closure;
         }
+        return $this;
     }
 
     /**
