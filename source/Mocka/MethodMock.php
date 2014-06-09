@@ -42,6 +42,7 @@ class MethodMock {
      * @return mixed
      */
     public function invoke(array $arguments = null) {
+        $arguments = (array) $arguments;
         $closure = $this->_getClosure($this->_counter);
         $this->_counter++;
         return call_user_func_array($closure, $arguments);
