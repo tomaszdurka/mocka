@@ -17,7 +17,7 @@ class ClassMock {
     private $_parentClassName;
 
     public function __construct($className) {
-        $this->_className = $className . uniqid('Mocka');
+        $this->_className = $className . uniqid();
         $parts = explode('\\', $this->_className);
         $this->_name = array_pop($parts);
         $this->_namespace = join('\\', $parts);
