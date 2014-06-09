@@ -22,6 +22,8 @@ class ClassMock {
         $this->_name = array_pop($parts);
         $this->_namespace = join('\\', $parts);
         $this->_parentClassName = (string) $className;
+
+        $this->load();
     }
 
     /**
@@ -48,6 +50,16 @@ class ClassMock {
     public function load() {
         $code = $this->generateCode();
         eval($code);
+    }
+
+    /**
+     * @param array|null $constructorArgs
+     * @return object
+     */
+    public function newInstance(array $constructorArgs = null) {
+        $constructorArgs = (array) $constructorArgs;
+        $mockedClassReflection = new \ReflectionClass($this->getClassName());
+        return $mockedClassReflection->newInstanceArgs($constructorArgs);
     }
 
     /**

@@ -4,13 +4,10 @@ class Mocka {
 
     /**
      * @param string $className
-     * @return string
+     * @return \Mocka\ClassMock
      */
     public function mockClass($className) {
-        $mockedClass = new \Mocka\ClassMock($className);
-        $mockedClassName = $mockedClass->getClassName();
-        $mockedClass->load();
-        return $mockedClassName;
+        return new \Mocka\ClassMock($className);
     }
 
     /**
@@ -19,8 +16,6 @@ class Mocka {
      * @return object
      */
     public function mockObject($className, array $constructorArgs = null) {
-        $constructorArgs = (array) $constructorArgs;
-        $mockedClassReflection = new ReflectionClass($this->mockClass($className));
-        return $mockedClassReflection->newInstanceArgs($constructorArgs);
+        return $this->mockClass($className)->newInstance($constructorArgs);
     }
 }

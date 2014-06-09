@@ -6,7 +6,8 @@ class MockaTest extends \PHPUnit_Framework_TestCase {
 
     public function testMockClass(){
         $mocka = new \Mocka();
-        $className = $mocka->mockClass('\\Mocka');
+        $mock = $mocka->mockClass('\\Mocka');
+        $className = $mock->getClassName();
         $this->assertTrue(is_subclass_of($className, '\\Mocka'));
         $this->assertNotSame('\\Mocka', $className);
         $this->assertStringStartsWith('\\Mocka', $className);
