@@ -16,6 +16,9 @@ class ClassMock {
     /** @var string */
     private $_parentClassName;
 
+    /**
+     * @param string $className
+     */
     public function __construct($className) {
         $this->_className = $className . uniqid();
         $parts = array_filter(explode('\\', $this->_className));
@@ -23,7 +26,7 @@ class ClassMock {
         $this->_namespace = join('\\', $parts);
         $this->_parentClassName = (string) $className;
 
-        $this->load();
+        $this->_load();
     }
 
     /**
@@ -45,11 +48,6 @@ class ClassMock {
      */
     public function getNamespace() {
         return $this->_namespace;
-    }
-
-    public function load() {
-        $code = $this->generateCode();
-        eval($code);
     }
 
     /**
@@ -75,7 +73,7 @@ class ClassMock {
         foreach ($reflection->getMethods() as $reflectionMethod) {
             $method = \CG_Method::buildFromReflection($reflectionMethod);
             $method->setAbstract(false);
-            $method->extractFromClosure(function() {
+            $method->extractFromClosure(function () {
                 return $this->_callMethod(__FUNCTION__, func_get_args());
             });
             $class->addMethod($method);
@@ -83,4 +81,8 @@ class ClassMock {
         return $class->dump();
     }
 
+    private function _load() {
+        $code = $this->generateCode();
+        eval($code);
+    }
 }
