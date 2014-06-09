@@ -65,7 +65,7 @@ class ClassMock {
             $method = \CG_Method::buildFromReflection($reflectionMethod);
             $method->setAbstract(false);
             $method->extractFromClosure(function() {
-                return $this->_callMethod(__METHOD__, func_get_args());
+                return $this->_callMethod(__FUNCTION__, func_get_args());
             });
             $class->addMethod($method);
         };

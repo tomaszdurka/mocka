@@ -4,8 +4,8 @@ namespace Mocka;
 
 trait ClassTrait {
 
-    /** @var MethodMock */
-    private $_mockedMethods;
+    /** @var MethodMock[] */
+    private $_mockedMethods = array();
 
     /**
      * @param string $name
@@ -34,7 +34,11 @@ trait ClassTrait {
         if ($this->_hasMockedMethod($name)) {
             return $this->_callMockedMethod($name, $arguments);
         }
-        return call_user_func_array(array('parent', $name), $arguments);
+        $reflectionClass = new \ReflectionClass($this);
+        $method = $reflectionClass->getParentClass()->getMethod($name);
+        if (!$method->isAbstract()) {
+            return $method->invoke($this, $arguments);
+        }
     }
 
     /**
