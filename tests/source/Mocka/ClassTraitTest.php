@@ -9,7 +9,7 @@ class ClassTraitTest extends \PHPUnit_Framework_TestCase {
     public function testCallMockedMethod() {
         $mocka = new Mocka();
         $mockClass = $mocka->mockClass('\MockaMocks\AbstractClass');
-        /** @var \MockaMocks\AbstractClass|Mocka\ClassTrait $object */
+        /** @var \MockaMocks\AbstractClass|\Mocka\ClassTrait $object */
         $object = $mockClass->newInstance();
         $this->assertNull($object->foo());
         $this->assertSame('bar', $object->bar());
