@@ -56,7 +56,7 @@ trait ClassTrait {
      */
     private function _callMockedMethod($name, $arguments) {
         $method = $this->_mockedMethods[$name];
-        return call_user_func_array($method, $arguments);
+        return $method->invoke($arguments);
     }
 
 }
