@@ -75,10 +75,20 @@ class ClassMock {
         $class->setNamespace($this->getNamespace());
         $class->addUse('\Mocka\ClassTrait');
 
-        $reflection = new \ReflectionClass($this->_parentClassName);
-        foreach ($reflection->getMethods() as $reflectionMethod) {
-            $method = \CG_Method::buildFromReflection($reflectionMethod);
+        $reflectionTrait = new \ReflectionClass('\\Mocka\\ClassTrait');
+        $traitMethods = array_map(function (\ReflectionMethod $method) {
+            return $method->getName();
+        }, $reflectionTrait->getMethods());
+        $reflectionClass = new \ReflectionClass($this->_parentClassName);
+        foreach ($reflectionClass->getMethods() as $reflectionMethod) {
+            if ($reflectionMethod->isPrivate() || in_array($reflectionMethod->getName(), $traitMethods)) {
+                continue;
+            }
+            $method = new \CG_Method($reflectionMethod->getName());
             $method->setAbstract(false);
+            $method->_setParametersFromReflection($reflectionMethod);
+            $method->_setStaticFromReflection($reflectionMethod);
+            $method->_setVisibilityFromReflection($reflectionMethod);
             $method->extractFromClosure(function () {
                 return $this->_callMethod(__FUNCTION__, func_get_args());
             });
