@@ -8,12 +8,21 @@ class ClassMock {
     private $_className;
 
     /** @var string */
+    private $_name;
+
+    /** @var string */
+    private $_namespace;
+
+    /** @var string */
     private $_parentClassName;
 
     public function __construct($className) {
         $this->_className = $className . uniqid('Mocka');
-        $this->_parentClassName = (string) $className;
+        $parts = explode('\\', $this->_className);
+        $this->_name = array_pop($parts);
+        $this->_namespace = join('\\', $parts);
 
+        $this->_parentClassName = (string) $className;
     }
 
     /**
@@ -26,10 +35,30 @@ class ClassMock {
     /**
      * @return string
      */
-    public function generateCode() {
-        $class = new \CG_Class($this->_className, $this->_parentClassName);
+    public function getName() {
+        return $this->_name;
+    }
 
-        $class->addUse('Mocka\ClassTrait');
+    /**
+     * @return string
+     */
+    public function getNamespace() {
+        return $this->_namespace;
+    }
+
+    public function load() {
+        $code = $this->generateCode();
+        eval($code);
+    }
+
+    /**
+     * @return string
+     */
+    public function generateCode() {
+
+        $class = new \CG_Class($this->getName(), $this->_parentClassName);
+        $class->setNamespace($this->getNamespace());
+        $class->addUse('\Mocka\ClassTrait');
 
         $reflection = new \ReflectionClass($this->_parentClassName);
         foreach ($reflection->getMethods() as $reflectionMethod) {
