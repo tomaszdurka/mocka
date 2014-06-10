@@ -30,7 +30,7 @@ class MockaTest extends \PHPUnit_Framework_TestCase {
             ->set(function ($foo) {
                 return $foo;
             })
-            ->at([1, 3], function () {
+            ->at(array(1, 3), function () {
                 return 'bar';
             });
 
