@@ -37,4 +37,15 @@ class MethodMockTest extends \PHPUnit_Framework_TestCase {
         });
         $method->invoke(['bar']);
     }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage must be an instance of Mocka
+     */
+    public function testTypeHinting() {
+        $method = new MethodMock();
+        $method->set(function (\Mocka $mocka) {
+        });
+        $method->invoke(['Invalid arg']);
+    }
 }
