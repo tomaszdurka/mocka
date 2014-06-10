@@ -86,9 +86,9 @@ class ClassMock {
             }
             $method = new \CG_Method($reflectionMethod->getName());
             $method->setAbstract(false);
-            $method->_setParametersFromReflection($reflectionMethod);
-            $method->_setStaticFromReflection($reflectionMethod);
-            $method->_setVisibilityFromReflection($reflectionMethod);
+            $method->setParametersFromReflection($reflectionMethod);
+            $method->setStaticFromReflection($reflectionMethod);
+            $method->setVisibilityFromReflection($reflectionMethod);
             $method->extractFromClosure(function () {
                 return $this->_callMethod(__FUNCTION__, func_get_args());
             });

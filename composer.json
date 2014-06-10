@@ -2,9 +2,8 @@
   "name": "tomaszdurka/mocka",
   "license": "MIT",
   "require": {
-    "tomaszdurka/codegenerator": "~0.2.0"
+    "tomaszdurka/codegenerator": "~0.3.0"
   },
-  "minimum-stability": "dev",
   "require-dev": {
     "phpunit/phpunit": "~3.7.10"
   },
