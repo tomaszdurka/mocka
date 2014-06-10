@@ -14,7 +14,7 @@ class MethodMockTest extends \PHPUnit_Framework_TestCase {
         $method->at(1, function () {
             return 'bar';
         });
-        $method->at([2, 5], function () {
+        $method->at(array(2, 5), function () {
             return 'zoo';
         });
 
