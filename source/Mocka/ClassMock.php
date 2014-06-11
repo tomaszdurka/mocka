@@ -96,9 +96,14 @@ class ClassMock {
 
     /**
      * @param string $name
+     * @throws Exception
      * @return MethodMock
      */
     public function mockMethod($name) {
+        $reflectionMethod = new \ReflectionMethod($this->_parentClassName, $name);
+        if ($reflectionMethod->isFinal()) {
+            throw new Exception('Cannot mock final method `' . $name . '`');
+        }
         $this->_mockedMethods[$name] = new MethodMock();
         return $this->_mockedMethods[$name];
     }

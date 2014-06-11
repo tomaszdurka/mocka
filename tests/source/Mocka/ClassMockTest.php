@@ -52,10 +52,11 @@ EOD;
     }
 
     /**
-     * @expectedException \Exception
+     * @expectedException \Mocka\Exception
      */
     public function testMockMethodFinal() {
-
+        $classMock = new ClassMock('\\MockaMocks\\AbstractClass');
+        $classMock->mockMethod('zoo');
     }
 
 }
