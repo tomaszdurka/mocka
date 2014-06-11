@@ -79,4 +79,12 @@ EOD;
         });
         $this->assertSame('bar', $className::nonexistent());
     }
+
+    public function testNewInstanceConstructorArgs() {
+        $classMock = new ClassMock('\\MockaMocks\\AbstractClass');
+        $constructorArgs = ['foo', 'bar'];
+        /** @var AbstractClass $object */
+        $object = $classMock->newInstance($constructorArgs);
+        $this->assertSame($object->constructorArgs, $constructorArgs);
+    }
 }
