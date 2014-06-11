@@ -25,6 +25,10 @@ class $name extends $parentClassName {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 
+    public function __construct(\$arg1 = null, \$arg2 = null) {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
     public function bar() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
@@ -47,6 +51,9 @@ EOD;
         $this->assertSame('foo', $object->bar());
     }
 
+    /**
+     * @expectedException \Exception
+     */
     public function testMockMethodFinal() {
 
     }
