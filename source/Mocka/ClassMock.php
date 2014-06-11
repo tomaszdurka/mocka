@@ -60,10 +60,7 @@ class ClassMock {
     public function newInstance(array $constructorArgs = null) {
         $constructorArgs = (array) $constructorArgs;
         $mockedClassReflection = new \ReflectionClass($this->getClassName());
-        /** @var ClassTrait $instance */
-        $instance = $mockedClassReflection->newInstanceArgs($constructorArgs);
-        $instance->setMockClass($this);
-        return $instance;
+        return $mockedClassReflection->newInstanceArgs($constructorArgs);
     }
 
     /**
@@ -128,5 +125,8 @@ class ClassMock {
     private function _load() {
         $code = $this->generateCode();
         eval($code);
+        /** @var ClassTrait $className */
+        $className = $this->getClassName();
+        $className::setMockClass($this);
     }
 }
