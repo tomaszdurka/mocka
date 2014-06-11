@@ -32,6 +32,10 @@ class $name extends $parentClassName {
     public function bar() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
+
+    public static function jar() {
+        return static::_callMethodStatic(__FUNCTION__, func_get_args());
+    }
 }
 EOD;
         $this->assertSame($expectedMockCode, $classMock->generateCode());
@@ -45,7 +49,7 @@ EOD;
 
         $this->assertSame('bar', $object->bar());
 
-        $classMock->mockMethod('bar')->set(function() {
+        $classMock->mockMethod('bar')->set(function () {
             return 'foo';
         });
         $this->assertSame('foo', $object->bar());
@@ -59,4 +63,15 @@ EOD;
         $classMock->mockMethod('zoo');
     }
 
+    public function testMockMethodStatic() {
+        $classMock = new ClassMock('\\MockaMocks\\AbstractClass');
+        /** @var AbstractClass $className */
+        $className = $classMock->getClassName();
+
+        $this->assertSame('jar', $className::jar());
+        $classMock->mockMethod('jar')->set(function() {
+            return 'foo';
+        });
+        $this->assertSame('foo', $className::jar());
+    }
 }

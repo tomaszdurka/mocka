@@ -18,4 +18,8 @@ abstract class AbstractClass {
 
     public final function zoo() {
     }
+
+    public static function jar() {
+        return 'jar';
+    }
 }

@@ -86,9 +86,15 @@ class ClassMock {
             $method->setParametersFromReflection($reflectionMethod);
             $method->setStaticFromReflection($reflectionMethod);
             $method->setVisibilityFromReflection($reflectionMethod);
-            $method->extractFromClosure(function () {
-                return $this->_callMethod(__FUNCTION__, func_get_args());
-            });
+            if ($reflectionMethod->isStatic()) {
+                $method->extractFromClosure(function () {
+                    return static::_callMethodStatic(__FUNCTION__, func_get_args());
+                });
+            } else {
+                $method->extractFromClosure(function () {
+                    return $this->_callMethod(__FUNCTION__, func_get_args());
+                });
+            }
             $class->addMethod($method);
         };
         return $class->dump();

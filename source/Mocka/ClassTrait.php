@@ -33,10 +33,24 @@ trait ClassTrait {
         if (self::$_classMock->hasMockedMethod($name)) {
             return self::$_classMock->callMockedMethod($name, $arguments);
         }
-        $reflectionClass = new \ReflectionClass($this);
-        $method = $reflectionClass->getParentClass()->getMethod($name);
-        if (!$method->isAbstract()) {
-            return $method->invoke($this, $arguments);
+        $reflectionMethod = (new \ReflectionClass($this))->getParentClass()->getMethod($name);
+        if (!$reflectionMethod->isAbstract()) {
+            return $reflectionMethod->invoke($this, $arguments);
+        }
+    }
+
+    /**
+     * @param string $name
+     * @param array  $arguments
+     * @return mixed
+     */
+    private static function _callMethodStatic($name, array $arguments) {
+        if (self::$_classMock->hasMockedMethod($name)) {
+            return self::$_classMock->callMockedMethod($name, $arguments);
+        }
+        $reflectionMethod = (new \ReflectionClass(get_called_class()))->getParentClass()->getMethod($name);
+        if (!$reflectionMethod->isAbstract()) {
+            return $reflectionMethod->invoke(null, $arguments);
         }
     }
 
