@@ -100,9 +100,11 @@ class ClassMock {
      * @return MethodMock
      */
     public function mockMethod($name) {
-        $reflectionMethod = new \ReflectionMethod($this->_parentClassName, $name);
-        if ($reflectionMethod->isFinal()) {
-            throw new Exception('Cannot mock final method `' . $name . '`');
+        $reflectionClass = new \ReflectionClass($this->_parentClassName);
+        if ($reflectionClass->hasMethod($name)) {
+            if ($reflectionClass->getMethod($name)->isFinal()) {
+                throw new Exception('Cannot mock final method `' . $name . '`');
+            }
         }
         $this->_mockedMethods[$name] = new MethodMock();
         return $this->_mockedMethods[$name];
@@ -125,7 +127,6 @@ class ClassMock {
         $method = $this->_mockedMethods[$name];
         return $method->invoke($arguments);
     }
-
 
     private function _load() {
         $code = $this->generateCode();
