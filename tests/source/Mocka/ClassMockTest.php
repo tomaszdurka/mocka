@@ -3,6 +3,8 @@
 namespace MockaTests\Mocka;
 
 use Mocka\ClassMock;
+use Mocka\ClassTrait;
+use MockaMocks\AbstractClass;
 
 class ClassMockTest extends \PHPUnit_Framework_TestCase {
 
@@ -29,6 +31,24 @@ class $name extends $parentClassName {
 }
 EOD;
         $this->assertSame($expectedMockCode, $classMock->generateCode());
+    }
+
+    public function testMockMethod() {
+        $parentClassName = '\\MockaMocks\\AbstractClass';
+        $classMock = new ClassMock($parentClassName);
+        /** @var ClassTrait|AbstractClass $object */
+        $object = $classMock->newInstance();
+
+        $this->assertSame('bar', $object->bar());
+
+        $classMock->mockMethod('bar')->set(function() {
+            return 'foo';
+        });
+        $this->assertSame('foo', $object->bar());
+    }
+
+    public function testMockMethodFinal() {
+
     }
 
 }
