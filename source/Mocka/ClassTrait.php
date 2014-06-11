@@ -35,7 +35,7 @@ trait ClassTrait {
         }
         $reflectionMethod = (new \ReflectionClass($this))->getParentClass()->getMethod($name);
         if (!$reflectionMethod->isAbstract()) {
-            return $reflectionMethod->invoke($this, $arguments);
+            return $reflectionMethod->invokeArgs($this, $arguments);
         }
     }
 
@@ -66,7 +66,7 @@ trait ClassTrait {
         }
         $reflectionMethod = (new \ReflectionClass(get_called_class()))->getParentClass()->getMethod($name);
         if (!$reflectionMethod->isAbstract()) {
-            return $reflectionMethod->invoke(null, $arguments);
+            return $reflectionMethod->invokeArgs(null, $arguments);
         }
     }
 }
