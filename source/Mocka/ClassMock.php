@@ -60,10 +60,7 @@ class ClassMock {
     public function newInstance(array $constructorArgs = null) {
         $constructorArgs = (array) $constructorArgs;
         $mockedClassReflection = new \ReflectionClass($this->getClassName());
-        /** @var ClassTrait $instance */
-        $instance = $mockedClassReflection->newInstanceArgs($constructorArgs);
-        $instance->setMockClass($this);
-        return $instance;
+        return $mockedClassReflection->newInstanceArgs($constructorArgs);
     }
 
     /**
@@ -81,7 +78,7 @@ class ClassMock {
         }, $reflectionTrait->getMethods());
         $reflectionClass = new \ReflectionClass($this->_parentClassName);
         foreach ($reflectionClass->getMethods() as $reflectionMethod) {
-            if ($reflectionMethod->isPrivate() || in_array($reflectionMethod->getName(), $traitMethods)) {
+            if ($reflectionMethod->isPrivate() || $reflectionMethod->isFinal() || in_array($reflectionMethod->getName(), $traitMethods)) {
                 continue;
             }
             $method = new \CG_Method($reflectionMethod->getName());
@@ -89,9 +86,15 @@ class ClassMock {
             $method->setParametersFromReflection($reflectionMethod);
             $method->setStaticFromReflection($reflectionMethod);
             $method->setVisibilityFromReflection($reflectionMethod);
-            $method->extractFromClosure(function () {
-                return $this->_callMethod(__FUNCTION__, func_get_args());
-            });
+            if ($reflectionMethod->isStatic()) {
+                $method->extractFromClosure(function () {
+                    return static::_callMethodStatic(__FUNCTION__, func_get_args());
+                });
+            } else {
+                $method->extractFromClosure(function () {
+                    return $this->_callMethod(__FUNCTION__, func_get_args());
+                });
+            }
             $class->addMethod($method);
         };
         return $class->dump();
@@ -99,9 +102,16 @@ class ClassMock {
 
     /**
      * @param string $name
+     * @throws Exception
      * @return MethodMock
      */
     public function mockMethod($name) {
+        $reflectionClass = new \ReflectionClass($this->_parentClassName);
+        if ($reflectionClass->hasMethod($name)) {
+            if ($reflectionClass->getMethod($name)->isFinal()) {
+                throw new Exception('Cannot mock final method `' . $name . '`');
+            }
+        }
         $this->_mockedMethods[$name] = new MethodMock();
         return $this->_mockedMethods[$name];
     }
@@ -124,9 +134,11 @@ class ClassMock {
         return $method->invoke($arguments);
     }
 
-
     private function _load() {
         $code = $this->generateCode();
         eval($code);
+        /** @var ClassTrait $className */
+        $className = $this->getClassName();
+        $className::setMockClass($this);
     }
 }

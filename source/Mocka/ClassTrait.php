@@ -5,15 +5,15 @@ namespace Mocka;
 trait ClassTrait {
 
     /** @var ClassMock */
-    private $_classMock;
+    private static $_classMock;
 
     /**
-     * @param string $methodName
+     * @param string $name
      * @param array  $arguments
      * @return mixed
      */
-    public function __call($methodName, $arguments) {
-        return $this->_callMethod($methodName, $arguments);
+    public function __call($name, $arguments) {
+        return $this->_callMethod($name, $arguments);
     }
 
     /**
@@ -21,14 +21,7 @@ trait ClassTrait {
      * @return MethodMock
      */
     public function mockMethod($name) {
-        return $this->_classMock->mockMethod($name);
-    }
-
-    /**
-     * @param ClassMock $classMock
-     */
-    public function setMockClass(ClassMock $classMock) {
-        $this->_classMock = $classMock;
+        return self::$_classMock->mockMethod($name);
     }
 
     /**
@@ -37,13 +30,43 @@ trait ClassTrait {
      * @return mixed
      */
     private function _callMethod($name, array $arguments) {
-        if ($this->_classMock->hasMockedMethod($name)) {
-            return $this->_classMock->callMockedMethod($name, $arguments);
+        if (self::$_classMock->hasMockedMethod($name)) {
+            return self::$_classMock->callMockedMethod($name, $arguments);
         }
-        $reflectionClass = new \ReflectionClass($this);
-        $method = $reflectionClass->getParentClass()->getMethod($name);
-        if (!$method->isAbstract()) {
-            return $method->invoke($this, $arguments);
+        $reflectionMethod = (new \ReflectionClass($this))->getParentClass()->getMethod($name);
+        if (!$reflectionMethod->isAbstract()) {
+            return $reflectionMethod->invoke($this, $arguments);
+        }
+    }
+
+    /**
+     * @param string $name
+     * @param array  $arguments
+     * @return mixed
+     */
+    public static function __callStatic($name, $arguments) {
+        return static::_callMethodStatic($name, $arguments);
+    }
+
+    /**
+     * @param ClassMock $classMock
+     */
+    public static function setMockClass(ClassMock $classMock) {
+        self::$_classMock = $classMock;
+    }
+
+    /**
+     * @param string $name
+     * @param array  $arguments
+     * @return mixed
+     */
+    private static function _callMethodStatic($name, array $arguments) {
+        if (self::$_classMock->hasMockedMethod($name)) {
+            return self::$_classMock->callMockedMethod($name, $arguments);
+        }
+        $reflectionMethod = (new \ReflectionClass(get_called_class()))->getParentClass()->getMethod($name);
+        if (!$reflectionMethod->isAbstract()) {
+            return $reflectionMethod->invoke(null, $arguments);
         }
     }
 }
