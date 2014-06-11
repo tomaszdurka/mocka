@@ -9,4 +9,7 @@ abstract class AbstractClass {
     public function bar() {
         return 'bar';
     }
+
+    public final function zoo() {
+    }
 }

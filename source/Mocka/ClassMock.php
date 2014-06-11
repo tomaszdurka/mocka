@@ -81,7 +81,7 @@ class ClassMock {
         }, $reflectionTrait->getMethods());
         $reflectionClass = new \ReflectionClass($this->_parentClassName);
         foreach ($reflectionClass->getMethods() as $reflectionMethod) {
-            if ($reflectionMethod->isPrivate() || in_array($reflectionMethod->getName(), $traitMethods)) {
+            if ($reflectionMethod->isPrivate() || $reflectionMethod->isFinal() || in_array($reflectionMethod->getName(), $traitMethods)) {
                 continue;
             }
             $method = new \CG_Method($reflectionMethod->getName());
