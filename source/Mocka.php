@@ -13,7 +13,7 @@ class Mocka {
     /**
      * @param string     $className
      * @param array|null $constructorArgs
-     * @return object
+     * @return \Mocka\ClassTrait
      */
     public function mockObject($className, array $constructorArgs = null) {
         return $this->mockClass($className)->newInstance($constructorArgs);
