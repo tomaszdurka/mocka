@@ -73,5 +73,10 @@ EOD;
             return 'foo';
         });
         $this->assertSame('foo', $className::jar());
+
+        $classMock->mockMethod('nonexistent')->set(function() {
+            return 'bar';
+        });
+        $this->assertSame('bar', $className::nonexistent());
     }
 }

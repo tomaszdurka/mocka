@@ -8,12 +8,21 @@ trait ClassTrait {
     private static $_classMock;
 
     /**
-     * @param string $methodName
+     * @param string $name
      * @param array  $arguments
      * @return mixed
      */
-    public function __call($methodName, $arguments) {
-        return $this->_callMethod($methodName, $arguments);
+    public function __call($name, $arguments) {
+        return $this->_callMethod($name, $arguments);
+    }
+
+    /**
+     * @param string $name
+     * @param array  $arguments
+     * @return mixed
+     */
+    public static function __callStatic($name, $arguments) {
+        return static::_callMethodStatic($name, $arguments);
     }
 
     /**
