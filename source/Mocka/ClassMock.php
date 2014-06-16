@@ -19,6 +19,9 @@ class ClassMock {
     /** @var MethodMock[] */
     private $_mockedMethods = array();
 
+    /** @var MethodMock[] */
+    private $_mockedStaticMethods = array();
+
     /**
      * @param string $className
      */
@@ -88,7 +91,7 @@ class ClassMock {
             $method->setVisibilityFromReflection($reflectionMethod);
             if ($reflectionMethod->isStatic()) {
                 $method->extractFromClosure(function () {
-                    return static::_callMethodStatic(__FUNCTION__, func_get_args());
+                    return static::_callStaticMethod(__FUNCTION__, func_get_args());
                 });
             } else {
                 $method->extractFromClosure(function () {
@@ -118,10 +121,34 @@ class ClassMock {
 
     /**
      * @param string $name
+     * @throws Exception
+     * @return MethodMock
+     */
+    public function mockStaticMethod($name) {
+        $reflectionClass = new \ReflectionClass($this->_parentClassName);
+        if ($reflectionClass->hasMethod($name)) {
+            if ($reflectionClass->getMethod($name)->isFinal()) {
+                throw new Exception('Cannot mock final method `' . $name . '`');
+            }
+        }
+        $this->_mockedStaticMethods[$name] = new MethodMock();
+        return $this->_mockedStaticMethods[$name];
+    }
+
+    /**
+     * @param string $name
      * @return bool
      */
     public function hasMockedMethod($name) {
         return array_key_exists($name, $this->_mockedMethods);
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasMockedStaticMethod($name) {
+        return array_key_exists($name, $this->_mockedStaticMethods);
     }
 
     /**
@@ -131,6 +158,16 @@ class ClassMock {
      */
     public function callMockedMethod($name, $arguments) {
         $method = $this->_mockedMethods[$name];
+        return $method->invoke($arguments);
+    }
+
+    /**
+     * @param string $name
+     * @param array  $arguments
+     * @return mixed
+     */
+    public function callMockedStaticMethod($name, $arguments) {
+        $method = $this->_mockedStaticMethods[$name];
         return $method->invoke($arguments);
     }
 

@@ -34,7 +34,7 @@ class $name extends $parentClassName {
     }
 
     public static function jar() {
-        return static::_callMethodStatic(__FUNCTION__, func_get_args());
+        return static::_callStaticMethod(__FUNCTION__, func_get_args());
     }
 }
 EOD;
@@ -69,12 +69,12 @@ EOD;
         $className = $classMock->getClassName();
 
         $this->assertSame('jar', $className::jar());
-        $classMock->mockMethod('jar')->set(function() {
+        $classMock->mockStaticMethod('jar')->set(function() {
             return 'foo';
         });
         $this->assertSame('foo', $className::jar());
 
-        $classMock->mockMethod('nonexistent')->set(function() {
+        $classMock->mockStaticMethod('nonexistent')->set(function() {
             return 'bar';
         });
         $this->assertSame('bar', $className::nonexistent());
