@@ -26,6 +26,14 @@ trait ClassTrait {
 
     /**
      * @param string $name
+     * @return MethodMock
+     */
+    public function mockStaticMethod($name) {
+        return self::$_classMock->mockStaticMethod($name);
+    }
+
+    /**
+     * @param string $name
      * @param array  $arguments
      * @return mixed
      */
@@ -45,7 +53,7 @@ trait ClassTrait {
      * @return mixed
      */
     public static function __callStatic($name, $arguments) {
-        return static::_callMethodStatic($name, $arguments);
+        return static::_callStaticMethod($name, $arguments);
     }
 
     /**
@@ -60,9 +68,9 @@ trait ClassTrait {
      * @param array  $arguments
      * @return mixed
      */
-    private static function _callMethodStatic($name, array $arguments) {
-        if (self::$_classMock->hasMockedMethod($name)) {
-            return self::$_classMock->callMockedMethod($name, $arguments);
+    private static function _callStaticMethod($name, array $arguments) {
+        if (self::$_classMock->hasMockedStaticMethod($name)) {
+            return self::$_classMock->callMockedStaticMethod($name, $arguments);
         }
         $reflectionMethod = (new \ReflectionClass(get_called_class()))->getParentClass()->getMethod($name);
         if (!$reflectionMethod->isAbstract()) {
