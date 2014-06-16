@@ -2,29 +2,31 @@
 
 namespace MockaTests;
 
+use Mocka\Mocka;
+
 class MockaTest extends \PHPUnit_Framework_TestCase {
 
     public function testMockClass() {
-        $mocka = new \Mocka();
-        $mock = $mocka->mockClass('\\Mocka');
+        $mocka = new Mocka();
+        $mock = $mocka->mockClass('\\Mocka\\Mocka');
         $className = $mock->getClassName();
-        $this->assertTrue(is_subclass_of($className, '\\Mocka'));
-        $this->assertNotSame('\\Mocka', $className);
-        $this->assertStringStartsWith('\\Mocka', $className);
+        $this->assertTrue(is_subclass_of($className, '\\Mocka\\Mocka'));
+        $this->assertNotSame('\\Mocka\\Mocka', $className);
+        $this->assertStringStartsWith('\\Mocka\\Mocka', $className);
 
-        $classNameOther = $mocka->mockClass('\\Mocka');
+        $classNameOther = $mocka->mockClass('\\Mocka\\Mocka');
         $this->assertNotSame($className, $classNameOther);
     }
 
     public function testMockObject() {
-        $mocka = new \Mocka();
-        $object = $mocka->mockObject('\\Mocka');
-        $this->assertInstanceOf('\\Mocka', $object);
+        $mocka = new Mocka();
+        $object = $mocka->mockObject('\\Mocka\\Mocka');
+        $this->assertInstanceOf('\\Mocka\\Mocka', $object);
     }
 
     public function testIntegrated() {
-        $mocka = new \Mocka();
-        $classMock = $mocka->mockClass('\\Mocka');
+        $mocka = new Mocka();
+        $classMock = $mocka->mockClass('\\Mocka\\Mocka');
 
         $classMock->mockMethod('nonexistentMethod')
             ->set(function ($foo) {
@@ -42,13 +44,13 @@ class MockaTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testMultiInheritance() {
-        $mocka = new \Mocka();
-        $mockClass = $mocka->mockClass('\\Mocka');
+        $mocka = new Mocka();
+        $mockClass = $mocka->mockClass('\\Mocka\\Mocka');
         $mockClass->mockMethod('foo')->set(function() {
             return 'foo';
         });
         $mockClassChild = $mocka->mockClass($mockClass->getClassName());
         $this->assertInstanceOf($mockClass->getClassName(), $mockClassChild->newInstance());
-        $this->assertInstanceOf('\\Mocka', $mockClassChild->newInstance());
+        $this->assertInstanceOf('\\Mocka\\Mocka', $mockClassChild->newInstance());
     }
 }

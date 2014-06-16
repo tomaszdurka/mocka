@@ -1,13 +1,15 @@
 <?php
 
-class Mocka {
+namespace Mocka;
+
+trait MockaTrait {
 
     /**
      * @param string $className
      * @return \Mocka\ClassMock
      */
     public function mockClass($className) {
-        return new \Mocka\ClassMock($className);
+        return new ClassMock($className);
     }
 
     /**
