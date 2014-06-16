@@ -63,7 +63,7 @@ EOD;
         $classMock->mockMethod('zoo');
     }
 
-    public function testMockMethodStatic() {
+    public function testMockStaticMethod() {
         $classMock = new ClassMock('\\MockaMocks\\AbstractClass');
         /** @var AbstractClass $className */
         $className = $classMock->getClassName();
