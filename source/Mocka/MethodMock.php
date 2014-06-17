@@ -56,6 +56,13 @@ class MethodMock {
     }
 
     /**
+     * @return int
+     */
+    public function getCallCount() {
+        return $this->_counter;
+    }
+
+    /**
      * @param int $at
      * @return \Closure
      */

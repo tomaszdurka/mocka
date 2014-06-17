@@ -48,4 +48,11 @@ class MethodMockTest extends \PHPUnit_Framework_TestCase {
         });
         $method->invoke(['Invalid arg']);
     }
+
+    public function testGetCallCount() {
+        $method = new MethodMock();
+        $this->assertSame(0, $method->getCallCount());
+        $method->invoke();
+        $this->assertSame(1, $method->getCallCount());
+    }
 }
