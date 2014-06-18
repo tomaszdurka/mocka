@@ -6,3 +6,9 @@ php:
 
 before_script:
   - composer install
+
+script:
+  - bin/phpunit
+
+after_script:
+  - vendor/bin/coveralls
