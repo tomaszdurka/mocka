@@ -2,6 +2,9 @@
 
 namespace Mocka;
 
+use CodeGenerator\ClassBlock;
+use CodeGenerator\MethodBlock;
+
 class ClassMock {
 
     /** @var string */
@@ -71,7 +74,7 @@ class ClassMock {
      */
     public function generateCode() {
 
-        $class = new \CG_Class($this->getName(), $this->_parentClassName);
+        $class = new ClassBlock($this->getName(), $this->_parentClassName);
         $class->setNamespace($this->getNamespace());
         $class->addUse('\Mocka\ClassTrait');
 
@@ -84,7 +87,7 @@ class ClassMock {
             if ($reflectionMethod->isPrivate() || $reflectionMethod->isFinal() || in_array($reflectionMethod->getName(), $traitMethods)) {
                 continue;
             }
-            $method = new \CG_Method($reflectionMethod->getName());
+            $method = new MethodBlock($reflectionMethod->getName());
             $method->setAbstract(false);
             $method->setParametersFromReflection($reflectionMethod);
             $method->setStaticFromReflection($reflectionMethod);
