@@ -42,7 +42,7 @@ trait ClassTrait {
             return self::$_classMock->callMockedMethod($name, $arguments);
         }
         $reflectionMethod = (new \ReflectionClass($this))->getParentClass()->getMethod($name);
-        if (!$reflectionMethod->isAbstract()) {
+        if (!$reflectionMethod->isAbstract() && !$reflectionMethod->isPrivate()) {
             return call_user_func_array(array('parent', $name), $arguments);
         }
     }
@@ -73,7 +73,7 @@ trait ClassTrait {
             return self::$_classMock->callMockedStaticMethod($name, $arguments);
         }
         $reflectionMethod = (new \ReflectionClass(get_called_class()))->getParentClass()->getMethod($name);
-        if (!$reflectionMethod->isAbstract()) {
+        if (!$reflectionMethod->isAbstract() && !$reflectionMethod->isPrivate()) {
             return call_user_func_array(array('parent', $name), $arguments);
         }
     }
