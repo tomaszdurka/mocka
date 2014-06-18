@@ -10,6 +10,7 @@ abstract class AbstractClass {
 
     public function __construct($arg1 = null, $arg2 = null) {
         $this->constructorArgs = array($arg1, $arg2);
+        $this->_foo();
     }
 
     public function bar() {
@@ -19,7 +20,14 @@ abstract class AbstractClass {
     public final function zoo() {
     }
 
+    protected function _foo(){
+    }
+
     public static function jar() {
+        return static::_jar();
+    }
+
+    protected static function _jar() {
         return 'jar';
     }
 }

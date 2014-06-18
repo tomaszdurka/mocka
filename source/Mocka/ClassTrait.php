@@ -43,7 +43,7 @@ trait ClassTrait {
         }
         $reflectionMethod = (new \ReflectionClass($this))->getParentClass()->getMethod($name);
         if (!$reflectionMethod->isAbstract()) {
-            return $reflectionMethod->invokeArgs($this, $arguments);
+            return call_user_func_array(array('parent', $name), $arguments);
         }
     }
 
@@ -74,7 +74,7 @@ trait ClassTrait {
         }
         $reflectionMethod = (new \ReflectionClass(get_called_class()))->getParentClass()->getMethod($name);
         if (!$reflectionMethod->isAbstract()) {
-            return $reflectionMethod->invokeArgs(null, $arguments);
+            return call_user_func_array(array('parent', $name), $arguments);
         }
     }
 }

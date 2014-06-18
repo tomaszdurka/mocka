@@ -33,7 +33,15 @@ class $name extends $parentClassName {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 
+    protected function _foo() {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
     public static function jar() {
+        return static::_callStaticMethod(__FUNCTION__, func_get_args());
+    }
+
+    protected static function _jar() {
         return static::_callStaticMethod(__FUNCTION__, func_get_args());
     }
 }
