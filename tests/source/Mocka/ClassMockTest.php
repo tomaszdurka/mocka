@@ -44,6 +44,10 @@ class $name extends $parentClassName {
     protected static function _jar() {
         return static::_callStaticMethod(__FUNCTION__, func_get_args());
     }
+
+    public function interfaceMethod() {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
 }
 EOD;
         $this->assertSame($expectedMockCode, $classMock->generateCode());

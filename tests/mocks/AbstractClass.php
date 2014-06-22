@@ -2,7 +2,7 @@
 
 namespace MockaMocks;
 
-abstract class AbstractClass {
+abstract class AbstractClass implements InterfaceMock{
 
     public $constructorArgs;
 
