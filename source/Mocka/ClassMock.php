@@ -27,7 +27,7 @@ class ClassMock {
      * @param array|null $interfaces
      */
     public function __construct($className, array $interfaces = null) {
-        $this->_className = 'Mock' . uniqid();
+        $this->_className = 'Mocka' . uniqid();
         if (null !== $className) {
             $this->_parentClassName = (string) $className;
         }
