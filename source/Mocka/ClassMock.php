@@ -177,8 +177,9 @@ class ClassMock {
         }
 
         $reflectionTrait = new \ReflectionClass('\\Mocka\\ClassTrait');
-        return array_filter($methods, function (\ReflectionMethod $reflectionMethod) use ($reflectionTrait) {
+        $methods = array_filter($methods, function (\ReflectionMethod $reflectionMethod) use ($reflectionTrait) {
             return !$reflectionMethod->isPrivate() && !$reflectionMethod->isFinal() && !$reflectionTrait->hasMethod($reflectionMethod->getName());
         });
+        return $methods;
     }
 }
