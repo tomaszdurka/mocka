@@ -10,14 +10,11 @@ class ClassMock {
     /** @var string */
     private $_className;
 
-    /** @var string */
-    private $_name;
-
-    /** @var string */
-    private $_namespace;
-
-    /** @var string */
+    /** @var string|null */
     private $_parentClassName;
+
+    /** @var array */
+    private $_interfaces;
 
     /** @var MethodMock[] */
     private $_mockedMethods = array();
@@ -26,14 +23,15 @@ class ClassMock {
     private $_mockedStaticMethods = array();
 
     /**
-     * @param string $className
+     * @param string     $className
+     * @param array|null $interfaces
      */
-    public function __construct($className) {
-        $this->_className = $className . uniqid();
-        $parts = array_filter(explode('\\', $this->_className));
-        $this->_name = array_pop($parts);
-        $this->_namespace = join('\\', $parts);
-        $this->_parentClassName = (string) $className;
+    public function __construct($className, array $interfaces = null) {
+        $this->_className = 'Mocka' . uniqid();
+        if (null !== $className) {
+            $this->_parentClassName = (string) $className;
+        }
+        $this->_interfaces = (array) $interfaces;
 
         $this->_load();
     }
@@ -43,20 +41,6 @@ class ClassMock {
      */
     public function getClassName() {
         return $this->_className;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName() {
-        return $this->_name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getNamespace() {
-        return $this->_namespace;
     }
 
     /**
@@ -73,20 +57,16 @@ class ClassMock {
      * @return string
      */
     public function generateCode() {
-
-        $class = new ClassBlock($this->getName(), $this->_parentClassName);
-        $class->setNamespace($this->getNamespace());
+        $class = new ClassBlock($this->getClassName());
+        if ($this->_parentClassName) {
+            $class->setParentClassName($this->_parentClassName);
+        }
+        foreach ($this->_interfaces as $interface) {
+            $class->addInterface($interface);
+        }
         $class->addUse('\Mocka\ClassTrait');
 
-        $reflectionTrait = new \ReflectionClass('\\Mocka\\ClassTrait');
-        $traitMethods = array_map(function (\ReflectionMethod $method) {
-            return $method->getName();
-        }, $reflectionTrait->getMethods());
-        $reflectionClass = new \ReflectionClass($this->_parentClassName);
-        foreach ($reflectionClass->getMethods() as $reflectionMethod) {
-            if ($reflectionMethod->isPrivate() || $reflectionMethod->isFinal() || in_array($reflectionMethod->getName(), $traitMethods)) {
-                continue;
-            }
+        foreach ($this->_getMockableMethods() as $reflectionMethod) {
             $method = new MethodBlock($reflectionMethod->getName());
             $method->setAbstract(false);
             $method->setParametersFromReflection($reflectionMethod);
@@ -102,7 +82,7 @@ class ClassMock {
                 });
             }
             $class->addMethod($method);
-        };
+        }
         return $class->dump();
     }
 
@@ -180,5 +160,29 @@ class ClassMock {
         /** @var ClassTrait $className */
         $className = $this->getClassName();
         $className::setMockClass($this);
+    }
+
+    /**
+     * @return \ReflectionMethod[]
+     */
+    private function _getMockableMethods() {
+        /** @var \ReflectionMethod[] $methods */
+        $methods = array();
+        $interfaces = $this->_interfaces;
+        if ($this->_parentClassName) {
+            $interfaces[] = $this->_parentClassName;
+        }
+        foreach ($interfaces as $interface) {
+            $reflectionClass = new \ReflectionClass($interface);
+            foreach ($reflectionClass->getMethods() as $method) {
+                $methods[$method->getName()] = $method;
+            }
+        }
+
+        $reflectionTrait = new \ReflectionClass('\\Mocka\\ClassTrait');
+        $methods = array_filter($methods, function (\ReflectionMethod $reflectionMethod) use ($reflectionTrait) {
+            return !$reflectionMethod->isPrivate() && !$reflectionMethod->isFinal() && !$reflectionTrait->hasMethod($reflectionMethod->getName());
+        });
+        return $methods;
     }
 }

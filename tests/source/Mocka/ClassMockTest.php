@@ -12,12 +12,9 @@ class ClassMockTest extends \PHPUnit_Framework_TestCase {
         $parentClassName = '\\MockaMocks\\AbstractClass';
 
         $classMock = new ClassMock($parentClassName);
-        $name = $classMock->getName();
-        $namespace = $classMock->getNamespace();
+        $className = $classMock->getClassName();
         $expectedMockCode = <<<EOD
-namespace $namespace;
-
-class $name extends $parentClassName {
+class $className extends $parentClassName {
 
     use \\Mocka\\ClassTrait;
 
@@ -43,6 +40,10 @@ class $name extends $parentClassName {
 
     protected static function _jar() {
         return static::_callStaticMethod(__FUNCTION__, func_get_args());
+    }
+
+    public function interfaceMethod() {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 }
 EOD;
@@ -77,12 +78,12 @@ EOD;
         $className = $classMock->getClassName();
 
         $this->assertSame('jar', $className::jar());
-        $classMock->mockStaticMethod('jar')->set(function() {
+        $classMock->mockStaticMethod('jar')->set(function () {
             return 'foo';
         });
         $this->assertSame('foo', $className::jar());
 
-        $classMock->mockStaticMethod('nonexistent')->set(function() {
+        $classMock->mockStaticMethod('nonexistent')->set(function () {
             return 'bar';
         });
         $this->assertSame('bar', $className::nonexistent());
@@ -94,5 +95,26 @@ EOD;
         /** @var AbstractClass $object */
         $object = $classMock->newInstance($constructorArgs);
         $this->assertSame($object->constructorArgs, $constructorArgs);
+    }
+
+    public function testGenerateCodeInterface() {
+        $parentInterfaceName = '\\MockaMocks\\InterfaceMock';
+        $classMock = new ClassMock(null, [$parentInterfaceName]);
+        $className = $classMock->getClassName();
+        $expectedMockCode = <<<EOD
+class $className implements $parentInterfaceName {
+
+    use \\Mocka\\ClassTrait;
+
+    public function zoo() {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
+    public function interfaceMethod() {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+}
+EOD;
+        $this->assertSame($expectedMockCode, $classMock->generateCode());
     }
 }
