@@ -57,28 +57,16 @@ class ClassMock {
      * @return string
      */
     public function generateCode() {
-        $class = new ClassBlock($this->getClassName(), $this->_parentClassName);
+        $class = new ClassBlock($this->getClassName());
+        if ($this->_parentClassName) {
+            $class->setParentClassName($this->_parentClassName);
+        }
         foreach ($this->_interfaces as $interface) {
             $class->addInterface($interface);
         }
         $class->addUse('\Mocka\ClassTrait');
 
-
-
-        /** @var \ReflectionMethod[] $methods */
-        $methods = array();
-        $parents = $this->_interfaces + (array) $this->_parentClassName;
-        foreach ($parents as $parent) {
-            $reflectionClass = new \ReflectionClass($parent);
-            foreach ($reflectionClass->getMethods() as $method) {
-                $methods[$method->getName()] = $method;
-            }
-        }
-        $reflectionTrait = new \ReflectionClass('\\Mocka\\ClassTrait');
-        foreach ($methods as $reflectionMethod) {
-            if ($reflectionMethod->isPrivate() || $reflectionMethod->isFinal() || $reflectionTrait->hasMethod($reflectionMethod->getName())) {
-                continue;
-            }
+        foreach ($this->_getMockableMethods() as $reflectionMethod) {
             $method = new MethodBlock($reflectionMethod->getName());
             $method->setAbstract(false);
             $method->setParametersFromReflection($reflectionMethod);
@@ -172,5 +160,25 @@ class ClassMock {
         /** @var ClassTrait $className */
         $className = $this->getClassName();
         $className::setMockClass($this);
+    }
+
+    /**
+     * @return \ReflectionMethod[]
+     */
+    private function _getMockableMethods() {
+        /** @var \ReflectionMethod[] $methods */
+        $methods = array();
+        $parents = $this->_interfaces + (array) $this->_parentClassName;
+        foreach ($parents as $parent) {
+            $reflectionClass = new \ReflectionClass($parent);
+            foreach ($reflectionClass->getMethods() as $method) {
+                $methods[$method->getName()] = $method;
+            }
+        }
+
+        $reflectionTrait = new \ReflectionClass('\\Mocka\\ClassTrait');
+        return array_filter($methods, function (\ReflectionMethod $reflectionMethod) use ($reflectionTrait) {
+            return !$reflectionMethod->isPrivate() && !$reflectionMethod->isFinal() && !$reflectionTrait->hasMethod($reflectionMethod->getName());
+        });
     }
 }
