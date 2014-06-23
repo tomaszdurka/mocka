@@ -168,9 +168,12 @@ class ClassMock {
     private function _getMockableMethods() {
         /** @var \ReflectionMethod[] $methods */
         $methods = array();
-        $parents = $this->_interfaces + (array) $this->_parentClassName;
-        foreach ($parents as $parent) {
-            $reflectionClass = new \ReflectionClass($parent);
+        $interfaces = $this->_interfaces;
+        if ($this->_parentClassName) {
+            $interfaces[] = $this->_parentClassName;
+        }
+        foreach ($interfaces as $interface) {
+            $reflectionClass = new \ReflectionClass($interface);
             foreach ($reflectionClass->getMethods() as $method) {
                 $methods[$method->getName()] = $method;
             }
