@@ -5,11 +5,21 @@ namespace Mocka;
 trait MockaTrait {
 
     /**
-     * @param string $className
+     * @param string     $className
+     * @param array|null $interfaces
      * @return \Mocka\ClassMock
      */
-    public function mockClass($className) {
-        return new ClassMock($className);
+    public function mockClass($className, array $interfaces = null) {
+        return new ClassMock($className, $interfaces);
+    }
+
+    /**
+     * @param string $interfaceName
+     * @return ClassMock
+     */
+    public function mockInterface($interfaceName) {
+        $interfaceName = (string) $interfaceName;
+        return new ClassMock(null, [$interfaceName]);
     }
 
     /**
