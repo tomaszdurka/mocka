@@ -26,9 +26,22 @@ class ClassTraitTest extends \PHPUnit_Framework_TestCase {
         $this->assertNull($object->foo());
         $this->assertSame('bar', $object->bar());
 
-        $object->mockMethod('foo')->set(function () {
+        $mockClass->mockMethod('foo')->set(function () {
             return 'foo';
         });
         $this->assertSame('foo', $object->foo());
+
+        $object->mockMethod('foo')->set(function () {
+            return 'bar';
+        });
+        $this->assertSame('bar', $object->foo());
+
+        $objectAnother = $mockClass->newInstance();
+        $this->assertSame('foo', $objectAnother->foo());
+
+        $mockClass->mockMethod('foo')->set(function () {
+            return 'zoo';
+        });
+        $this->assertSame('bar', $object->foo());
     }
 }

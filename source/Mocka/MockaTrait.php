@@ -5,12 +5,12 @@ namespace Mocka;
 trait MockaTrait {
 
     /**
-     * @param string     $className
+     * @param string     $parentClassName
      * @param array|null $interfaces
      * @return \Mocka\ClassMock
      */
-    public function mockClass($className, array $interfaces = null) {
-        return new ClassMock($className, $interfaces);
+    public function mockClass($parentClassName, array $interfaces = null) {
+        return new ClassMock(null, $parentClassName, $interfaces);
     }
 
     /**
@@ -19,7 +19,7 @@ trait MockaTrait {
      */
     public function mockInterface($interfaceName) {
         $interfaceName = (string) $interfaceName;
-        return new ClassMock(null, [$interfaceName]);
+        return $this->mockClass(null, [$interfaceName]);
     }
 
     /**

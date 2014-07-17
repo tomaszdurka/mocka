@@ -7,6 +7,9 @@ trait ClassTrait {
     /** @var ClassMock */
     private static $_classMock;
 
+    /** @var ClassMock */
+    private $_objectClassMock;
+
     /**
      * @param string $name
      * @param array  $arguments
@@ -21,15 +24,17 @@ trait ClassTrait {
      * @return MethodMock
      */
     public function mockMethod($name) {
-        return self::$_classMock->mockMethod($name);
+        return $this->_getObjectClassMock()->mockMethod($name);
     }
 
     /**
-     * @param string $name
-     * @return MethodMock
+     * @return ClassMock
      */
-    public function mockStaticMethod($name) {
-        return self::$_classMock->mockStaticMethod($name);
+    private function _getObjectClassMock() {
+        if (!$this->_objectClassMock) {
+            $this->_objectClassMock = new ClassMock();
+        }
+        return $this->_objectClassMock;
     }
 
     /**
@@ -38,6 +43,9 @@ trait ClassTrait {
      * @return mixed
      */
     private function _callMethod($name, array $arguments) {
+        if ($this->_getObjectClassMock()->hasMockedMethod($name)) {
+            return $this->_getObjectClassMock()->callMockedMethod($name, $arguments);
+        }
         if (self::$_classMock->hasMockedMethod($name)) {
             return self::$_classMock->callMockedMethod($name, $arguments);
         }
