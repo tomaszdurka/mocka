@@ -49,7 +49,7 @@ class MockaTest extends \PHPUnit_Framework_TestCase {
             return 'foo';
         });
         $mockClassChild = $mocka->mockClass($mockClass->getClassName());
-        $this->assertInstanceOf($mockClass->getClassName(), $mockClassChild->newInstance());
-        $this->assertInstanceOf('\\Mocka\\Mocka', $mockClassChild->newInstance());
+        $this->assertInstanceOf($mockClass->getClassName(), $mockClassChild->newInstanceWithoutConstructor());
+        $this->assertInstanceOf('\\Mocka\\Mocka', $mockClassChild->newInstanceWithoutConstructor());
     }
 }

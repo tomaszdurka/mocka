@@ -8,7 +8,7 @@ abstract class AbstractClass implements InterfaceMock{
 
     abstract public function foo();
 
-    public function __construct($arg1 = null, $arg2 = null) {
+    public function __construct($arg1, $arg2 = null) {
         $this->constructorArgs = array($arg1, $arg2);
         $this->_foo();
     }

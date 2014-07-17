@@ -23,7 +23,7 @@ class FooClass extends $parentClassName {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 
-    public function __construct(\$arg1 = null, \$arg2 = null) {
+    public function __construct(\$arg1, \$arg2 = null) {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 
@@ -55,7 +55,7 @@ EOD;
         $parentClassName = '\\MockaMocks\\AbstractClass';
         $classMock = new ClassMock(null, $parentClassName);
         /** @var ClassTrait|AbstractClass $object */
-        $object = $classMock->newInstance();
+        $object = $classMock->newInstanceWithoutConstructor();
 
         $this->assertSame('bar', $object->bar());
 
@@ -98,6 +98,18 @@ EOD;
         $this->assertSame($object->constructorArgs, $constructorArgs);
     }
 
+    public function testNewInstanceWithoutConstructor() {
+        $classMock = new ClassMock();
+        $constructorRun = false;
+        $classMock->mockMethod('__construct')->set(function() use (&$constructorRun) {
+            $constructorRun = true;
+        });
+        $classMock->newInstanceWithoutConstructor();
+        $this->assertFalse($constructorRun);
+        $classMock->newInstance();
+        $this->assertTrue($constructorRun);
+    }
+
     public function testGenerateCodeInterface() {
         $parentInterfaceName = '\\MockaMocks\\InterfaceMock';
         $classMock = new ClassMock('ClassFromInterface', null, [$parentInterfaceName]);
@@ -111,6 +123,10 @@ class ClassFromInterface implements $parentInterfaceName {
     }
 
     public function interfaceMethod() {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
+    public function __construct() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 }

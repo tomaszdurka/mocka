@@ -66,6 +66,14 @@ class ClassMock {
     }
 
     /**
+     * @return \Mocka\ClassTrait
+     */
+    public function newInstanceWithoutConstructor() {
+        $mockedClassReflection = new \ReflectionClass($this->getClassName());
+        return $mockedClassReflection->newInstanceWithoutConstructor();
+    }
+
+    /**
      * @return string
      */
     public function generateCode() {
@@ -81,7 +89,8 @@ class ClassMock {
         }
         $class->addUse('\Mocka\ClassTrait');
 
-        foreach ($this->_getMockableMethods() as $reflectionMethod) {
+        $mockableMethods = $this->_getMockableMethods();
+        foreach ($mockableMethods as $reflectionMethod) {
             $method = new MethodBlock($reflectionMethod->getName());
             $method->setAbstract(false);
             $method->setParametersFromReflection($reflectionMethod);
@@ -96,6 +105,13 @@ class ClassMock {
                     return $this->_callMethod(__FUNCTION__, func_get_args());
                 });
             }
+            $class->addMethod($method);
+        }
+        if (!array_key_exists('__construct', $mockableMethods)) {
+            $method = new MethodBlock('__construct');
+            $method->extractFromClosure(function () {
+                return $this->_callMethod(__FUNCTION__, func_get_args());
+            });
             $class->addMethod($method);
         }
         return $class->dump();
