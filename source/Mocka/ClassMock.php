@@ -23,10 +23,10 @@ class ClassMock {
     private $_mockedStaticMethods = array();
 
     /**
-     * @param string     $className
-     * @param array|null $interfaces
+     * @param string|null $className
+     * @param array|null  $interfaces
      */
-    public function __construct($className, array $interfaces = null) {
+    public function __construct($className = null, array $interfaces = null) {
         $this->_className = 'Mocka' . uniqid();
         if (null !== $className) {
             $this->_parentClassName = (string) $className;
@@ -92,9 +92,9 @@ class ClassMock {
      * @return MethodMock
      */
     public function mockMethod($name) {
-        $reflectionClass = new \ReflectionClass($this->_parentClassName);
-        if ($reflectionClass->hasMethod($name)) {
-            if ($reflectionClass->getMethod($name)->isFinal()) {
+        if ($this->_parentClassName) {
+            $reflectionClass = new \ReflectionClass($this->_parentClassName);
+            if ($reflectionClass->hasMethod($name) && $reflectionClass->getMethod($name)->isFinal()) {
                 throw new Exception('Cannot mock final method `' . $name . '`');
             }
         }
