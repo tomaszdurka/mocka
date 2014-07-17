@@ -49,9 +49,13 @@ trait ClassTrait {
         if (self::$_classMock->hasMockedMethod($name)) {
             return self::$_classMock->callMockedMethod($name, $arguments);
         }
-        $reflectionMethod = (new \ReflectionClass($this))->getParentClass()->getMethod($name);
-        if (!$reflectionMethod->isAbstract() && !$reflectionMethod->isPrivate()) {
-            return call_user_func_array(array('parent', $name), $arguments);
+
+        $reflectionParentClass = (new \ReflectionClass($this))->getParentClass();
+        if ($reflectionParentClass->hasMethod($name)) {
+            $reflectionMethod = (new \ReflectionClass($this))->getParentClass()->getMethod($name);
+            if (!$reflectionMethod->isAbstract() && !$reflectionMethod->isPrivate()) {
+                return call_user_func_array(array('parent', $name), $arguments);
+            }
         }
     }
 

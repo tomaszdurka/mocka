@@ -22,7 +22,7 @@ class ClassTraitTest extends \PHPUnit_Framework_TestCase {
         $mocka = new Mocka();
         $mockClass = $mocka->mockClass('\MockaMocks\AbstractClass');
         /** @var \MockaMocks\AbstractClass|\Mocka\ClassTrait $object */
-        $object = $mockClass->newInstance();
+        $object = $mockClass->newInstanceWithoutConstructor();
         $this->assertNull($object->foo());
         $this->assertSame('bar', $object->bar());
 
@@ -36,7 +36,7 @@ class ClassTraitTest extends \PHPUnit_Framework_TestCase {
         });
         $this->assertSame('bar', $object->foo());
 
-        $objectAnother = $mockClass->newInstance();
+        $objectAnother = $mockClass->newInstanceWithoutConstructor();
         $this->assertSame('foo', $objectAnother->foo());
 
         $mockClass->mockMethod('foo')->set(function () {
