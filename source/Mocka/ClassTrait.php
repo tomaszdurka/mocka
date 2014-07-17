@@ -8,7 +8,7 @@ trait ClassTrait {
     private static $_classMock;
 
     /** @var ClassMock */
-    private $objectClassMock;
+    private $_objectClassMock;
 
     /**
      * @param string $name
@@ -31,10 +31,10 @@ trait ClassTrait {
      * @return ClassMock
      */
     private function _getObjectClassMock() {
-        if (!$this->objectClassMock) {
-            $this->objectClassMock = new ClassMock();
+        if (!$this->_objectClassMock) {
+            $this->_objectClassMock = new ClassMock();
         }
-        return $this->objectClassMock;
+        return $this->_objectClassMock;
     }
 
     /**
