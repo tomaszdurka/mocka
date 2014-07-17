@@ -11,9 +11,9 @@ class ClassMockTest extends \PHPUnit_Framework_TestCase {
     public function testGenerateCode() {
         $parentClassName = '\\MockaMocks\\AbstractClass';
 
-        $classMock = new ClassMock('FooNamespace\\FooClass', $parentClassName);
+        $classMock = new ClassMock('\\Nested\\FooNamespace\\FooClass', $parentClassName);
         $expectedMockCode = <<<EOD
-namespace FooNamespace;
+namespace Nested\\FooNamespace;
 
 class FooClass extends $parentClassName {
 
