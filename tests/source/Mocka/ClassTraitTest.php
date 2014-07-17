@@ -2,6 +2,7 @@
 
 namespace MockaTests\Mocka;
 
+use Mocka\ClassMock;
 use \Mocka\Mocka;
 
 class ClassTraitTest extends \PHPUnit_Framework_TestCase {
@@ -43,5 +44,30 @@ class ClassTraitTest extends \PHPUnit_Framework_TestCase {
             return 'zoo';
         });
         $this->assertSame('bar', $object->foo());
+    }
+
+    public function testClone() {
+        $mockClass = new ClassMock();
+        $instance = $mockClass->newInstance();
+        $this->assertSame(null, $instance->foo());
+
+        $instance->mockMethod('foo')->set(function() {
+            return 'foo';
+        });
+        $clonedInstance = clone $instance;
+        $this->assertSame('foo', $instance->foo());
+        $this->assertSame('foo', $clonedInstance->foo());
+
+        $clonedInstance->mockMethod('foo')->set(function() {
+            return 'bar';
+        });
+        $this->assertSame('foo', $instance->foo());
+        $this->assertSame('bar', $clonedInstance->foo());
+
+        $instance->mockMethod('bar')->set(function() {
+            return 'bar';
+        });
+        $this->assertSame('bar', $instance->bar());
+        $this->assertSame(null, $clonedInstance->bar());
     }
 }
