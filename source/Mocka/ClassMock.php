@@ -8,7 +8,10 @@ use CodeGenerator\MethodBlock;
 class ClassMock {
 
     /** @var string */
-    private $_className;
+    private $_name;
+
+    /** @var string|null */
+    private $_namespace;
 
     /** @var string|null */
     private $_parentClassName;
@@ -24,13 +27,17 @@ class ClassMock {
 
     /**
      * @param string|null $className
+     * @param string|null $parentClassName
      * @param array|null  $interfaces
      */
-    public function __construct($className = null, array $interfaces = null) {
-        $this->_className = 'Mocka' . uniqid();
-        if (null !== $className) {
-            $this->_parentClassName = (string) $className;
+    public function __construct($className = null, $parentClassName = null, array $interfaces = null) {
+        if (null !== $parentClassName) {
+            $this->_parentClassName = (string) $parentClassName;
         }
+        if (null === $className) {
+            $className = $this->_parentClassName . 'Mocka' . uniqid();
+        }
+        $this->_extractNameAndNamespace($className);
         $this->_interfaces = (array) $interfaces;
 
         $this->_load();
@@ -40,7 +47,12 @@ class ClassMock {
      * @return string
      */
     public function getClassName() {
-        return $this->_className;
+        $className = '\\';
+        if ($this->_namespace) {
+            $className .= $this->_namespace . '\\';
+        }
+        $className .= $this->_name;
+        return $className;
     }
 
     /**
@@ -57,7 +69,10 @@ class ClassMock {
      * @return string
      */
     public function generateCode() {
-        $class = new ClassBlock($this->getClassName());
+        $class = new ClassBlock($this->_name);
+        if ($this->_namespace) {
+            $class->setNamespace($this->_namespace);
+        }
         if ($this->_parentClassName) {
             $class->setParentClassName($this->_parentClassName);
         }
@@ -184,5 +199,17 @@ class ClassMock {
             return !$reflectionMethod->isPrivate() && !$reflectionMethod->isFinal() && !$reflectionTrait->hasMethod($reflectionMethod->getName());
         });
         return $methods;
+    }
+
+    /**
+     * @param string $className
+     */
+    private function _extractNameAndNamespace($className) {
+        $parts = explode('\\', $className);
+        $parts = array_filter($parts);
+        $this->_name = array_pop($parts);
+        if ($parts) {
+            $this->_namespace = join('\\', $parts);
+        }
     }
 }

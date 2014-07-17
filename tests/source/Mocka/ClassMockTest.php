@@ -11,10 +11,11 @@ class ClassMockTest extends \PHPUnit_Framework_TestCase {
     public function testGenerateCode() {
         $parentClassName = '\\MockaMocks\\AbstractClass';
 
-        $classMock = new ClassMock($parentClassName);
-        $className = $classMock->getClassName();
+        $classMock = new ClassMock('FooNamespace\\FooClass', $parentClassName);
         $expectedMockCode = <<<EOD
-class $className extends $parentClassName {
+namespace FooNamespace;
+
+class FooClass extends $parentClassName {
 
     use \\Mocka\\ClassTrait;
 
@@ -52,7 +53,7 @@ EOD;
 
     public function testMockMethod() {
         $parentClassName = '\\MockaMocks\\AbstractClass';
-        $classMock = new ClassMock($parentClassName);
+        $classMock = new ClassMock(null, $parentClassName);
         /** @var ClassTrait|AbstractClass $object */
         $object = $classMock->newInstance();
 
@@ -68,12 +69,12 @@ EOD;
      * @expectedException \Mocka\Exception
      */
     public function testMockMethodFinal() {
-        $classMock = new ClassMock('\\MockaMocks\\AbstractClass');
+        $classMock = new ClassMock(null, '\\MockaMocks\\AbstractClass');
         $classMock->mockMethod('zoo');
     }
 
     public function testMockStaticMethod() {
-        $classMock = new ClassMock('\\MockaMocks\\AbstractClass');
+        $classMock = new ClassMock(null, '\\MockaMocks\\AbstractClass');
         /** @var AbstractClass $className */
         $className = $classMock->getClassName();
 
@@ -90,7 +91,7 @@ EOD;
     }
 
     public function testNewInstanceConstructorArgs() {
-        $classMock = new ClassMock('\\MockaMocks\\AbstractClass');
+        $classMock = new ClassMock(null, '\\MockaMocks\\AbstractClass');
         $constructorArgs = ['foo', 'bar'];
         /** @var AbstractClass $object */
         $object = $classMock->newInstance($constructorArgs);
@@ -99,10 +100,9 @@ EOD;
 
     public function testGenerateCodeInterface() {
         $parentInterfaceName = '\\MockaMocks\\InterfaceMock';
-        $classMock = new ClassMock(null, [$parentInterfaceName]);
-        $className = $classMock->getClassName();
+        $classMock = new ClassMock('ClassFromInterface', null, [$parentInterfaceName]);
         $expectedMockCode = <<<EOD
-class $className implements $parentInterfaceName {
+class ClassFromInterface implements $parentInterfaceName {
 
     use \\Mocka\\ClassTrait;
 
