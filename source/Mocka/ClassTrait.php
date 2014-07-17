@@ -10,6 +10,13 @@ trait ClassTrait {
     /** @var ClassMock */
     private $_objectClassMock;
 
+    public function __clone() {
+        $this->_objectClassMock = clone $this->_objectClassMock;
+        if (static::_hasParentMethod('__clone')) {
+            call_user_func(array('parent', '__clone'));
+        }
+    }
+
     /**
      * @param string $name
      * @param array  $arguments
@@ -49,14 +56,30 @@ trait ClassTrait {
         if (self::$_classMock->hasMockedMethod($name)) {
             return self::$_classMock->callMockedMethod($name, $arguments);
         }
-
-        $reflectionParentClass = (new \ReflectionClass($this))->getParentClass();
-        if ($reflectionParentClass->hasMethod($name)) {
-            $reflectionMethod = (new \ReflectionClass($this))->getParentClass()->getMethod($name);
-            if (!$reflectionMethod->isAbstract() && !$reflectionMethod->isPrivate()) {
-                return call_user_func_array(array('parent', $name), $arguments);
-            }
+        if (static::_hasParentMethod($name)) {
+            return call_user_func_array(array('parent', $name), $arguments);
         }
+        return null;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    private static function _hasParentMethod($name) {
+        $className = get_called_class();
+        $reflectionParentClass = (new \ReflectionClass($className))->getParentClass();
+        if (!$reflectionParentClass) {
+            return false;
+        }
+        if (!$reflectionParentClass->hasMethod($name)) {
+            return false;
+        }
+        $reflectionMethod = $reflectionParentClass->getMethod($name);
+        if ($reflectionMethod->isAbstract() || $reflectionMethod->isPrivate()) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -84,9 +107,9 @@ trait ClassTrait {
         if (self::$_classMock->hasMockedStaticMethod($name)) {
             return self::$_classMock->callMockedStaticMethod($name, $arguments);
         }
-        $reflectionMethod = (new \ReflectionClass(get_called_class()))->getParentClass()->getMethod($name);
-        if (!$reflectionMethod->isAbstract() && !$reflectionMethod->isPrivate()) {
+        if (static::_hasParentMethod($name)) {
             return call_user_func_array(array('parent', $name), $arguments);
         }
+        return null;
     }
 }
