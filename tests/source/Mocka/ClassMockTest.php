@@ -3,7 +3,7 @@
 namespace MockaTests\Mocka;
 
 use Mocka\ClassMock;
-use Mocka\ClassTrait;
+use Mocka\AbstractClassTrait;
 use MockaMocks\AbstractClass;
 
 class ClassMockTest extends \PHPUnit_Framework_TestCase {
@@ -12,40 +12,13 @@ class ClassMockTest extends \PHPUnit_Framework_TestCase {
         $parentClassName = '\\MockaMocks\\AbstractClass';
 
         $classMock = new ClassMock('\\Nested\\FooNamespace\\FooClass', $parentClassName);
+        $parentMockClassName = $classMock->getParentClassName();
         $expectedMockCode = <<<EOD
 namespace Nested\\FooNamespace;
 
-class FooClass extends $parentClassName {
+class FooClass extends \\$parentMockClassName {
 
     use \\Mocka\\ClassTrait;
-
-    public function foo() {
-        return \$this->_callMethod(__FUNCTION__, func_get_args());
-    }
-
-    public function __construct(\$arg1, \$arg2 = null) {
-        return \$this->_callMethod(__FUNCTION__, func_get_args());
-    }
-
-    public function bar() {
-        return \$this->_callMethod(__FUNCTION__, func_get_args());
-    }
-
-    protected function _foo() {
-        return \$this->_callMethod(__FUNCTION__, func_get_args());
-    }
-
-    public static function jar() {
-        return static::_callStaticMethod(__FUNCTION__, func_get_args());
-    }
-
-    protected static function _jar() {
-        return static::_callStaticMethod(__FUNCTION__, func_get_args());
-    }
-
-    public function interfaceMethod() {
-        return \$this->_callMethod(__FUNCTION__, func_get_args());
-    }
 }
 EOD;
         $this->assertSame($expectedMockCode, $classMock->generateCode());
@@ -54,7 +27,7 @@ EOD;
     public function testMockMethod() {
         $parentClassName = '\\MockaMocks\\AbstractClass';
         $classMock = new ClassMock(null, $parentClassName);
-        /** @var ClassTrait|AbstractClass $object */
+        /** @var AbstractClassTrait|AbstractClass $object */
         $object = $classMock->newInstanceWithoutConstructor();
 
         $this->assertSame('bar', $object->bar());
@@ -108,29 +81,5 @@ EOD;
         $this->assertFalse($constructorRun);
         $classMock->newInstance();
         $this->assertTrue($constructorRun);
-    }
-
-    public function testGenerateCodeInterface() {
-        $parentInterfaceName = '\\MockaMocks\\InterfaceMock';
-        $classMock = new ClassMock('ClassFromInterface', null, [$parentInterfaceName]);
-        $expectedMockCode = <<<EOD
-class ClassFromInterface implements $parentInterfaceName {
-
-    use \\Mocka\\ClassTrait;
-
-    public function zoo() {
-        return \$this->_callMethod(__FUNCTION__, func_get_args());
-    }
-
-    public function interfaceMethod() {
-        return \$this->_callMethod(__FUNCTION__, func_get_args());
-    }
-
-    public function __construct() {
-        return \$this->_callMethod(__FUNCTION__, func_get_args());
-    }
-}
-EOD;
-        $this->assertSame($expectedMockCode, $classMock->generateCode());
     }
 }
