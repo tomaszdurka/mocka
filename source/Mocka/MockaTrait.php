@@ -25,7 +25,7 @@ trait MockaTrait {
     /**
      * @param string     $className
      * @param array|null $constructorArgs
-     * @return \Mocka\ClassTrait
+     * @return \Mocka\AbstractClassTrait
      */
     public function mockObject($className, array $constructorArgs = null) {
         return $this->mockClass($className)->newInstance($constructorArgs);
