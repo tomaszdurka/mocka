@@ -25,9 +25,14 @@ trait AbstractClassTrait {
 
     /**
      * @param string $name
+     * @throws Exception
      * @return MethodMock
      */
     public function mockMethod($name) {
+        $reflectionClass = new \ReflectionClass($this);
+        if ($reflectionClass->hasMethod($name) && $reflectionClass->getMethod($name)->isFinal()) {
+            throw new Exception('Cannot mock final method `' . $name . '`');
+        }
         return $this->_getObjectMethodMockCollection()->mockMethod($name);
     }
 

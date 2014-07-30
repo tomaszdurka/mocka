@@ -4,6 +4,7 @@ namespace MockaTests\Mocka;
 
 use Mocka\ClassAbstractMock;
 use Mocka\AbstractClassTrait;
+use Mocka\ClassMock;
 
 class ClassAbstractMockTest extends \PHPUnit_Framework_TestCase {
 
@@ -72,6 +73,14 @@ class $className implements $parentInterfaceName {
 }
 EOD;
         $this->assertSame($expectedMockCode, $classMock->generateCode());
+    }
+
+    /**
+     * @expectedException \Mocka\Exception
+     */
+    public function testMockMethodFinal() {
+        $mock = (new ClassMock(null, '\\MockaMocks\\AbstractClass'))->newInstanceWithoutConstructor();
+        $mock->mockMethod('zoo');
     }
 
     /**
