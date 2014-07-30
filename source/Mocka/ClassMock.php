@@ -118,6 +118,13 @@ class ClassMock {
 
     /**
      * @param string $name
+     */
+    public function unmockMethod($name) {
+        $this->_methodMockCollectionInstance->unmockMethod($name);
+    }
+
+    /**
+     * @param string $name
      * @throws Exception
      * @return MethodMock
      */
@@ -129,6 +136,13 @@ class ClassMock {
             }
         }
         return $this->_methodMockCollectionStatic->mockMethod($name);
+    }
+
+    /**
+     * @param string $name
+     */
+    public function unmockStaticMethod($name) {
+        $this->_methodMockCollectionStatic->unmockMethod($name);
     }
 
     /**

@@ -38,6 +38,21 @@ EOD;
         $this->assertSame('foo', $object->bar());
     }
 
+    public function testUnmockMethod() {
+        $parentClassName = '\\MockaMocks\\AbstractClass';
+        $classMock = new ClassMock(null, $parentClassName);
+        /** @var AbstractClassTrait|AbstractClass $object */
+        $object = $classMock->newInstanceWithoutConstructor();
+
+        $this->assertSame('bar', $object->bar());
+
+        $classMock->mockMethod('bar');
+        $this->assertSame(null, $object->bar());
+
+        $classMock->unmockMethod('bar');
+        $this->assertSame('bar', $object->bar());
+    }
+
     /**
      * @expectedException \Mocka\Exception
      */
