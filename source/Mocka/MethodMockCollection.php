@@ -19,6 +19,18 @@ class MethodMockCollection {
 
     /**
      * @param string $name
+     * @throws Exception
+     */
+    public function unmockMethod($name) {
+        $name = (string) $name;
+        if (!$this->hasMockedMethod($name)) {
+            throw new Exception("Method `{$name}` has not been mocked");
+        }
+        unset($this->_mockedMethods[$name]);
+    }
+
+    /**
+     * @param string $name
      * @return bool
      */
     public function hasMockedMethod($name) {

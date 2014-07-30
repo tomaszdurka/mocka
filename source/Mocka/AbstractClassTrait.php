@@ -37,6 +37,13 @@ trait AbstractClassTrait {
     }
 
     /**
+     * @param string $name
+     */
+    public function unmockMethod($name) {
+        $this->_getObjectMethodMockCollection()->unmockMethod($name);
+    }
+
+    /**
      * @return MethodMockCollection
      */
     private function _getObjectMethodMockCollection() {
