@@ -129,9 +129,9 @@ class ClassMock {
      * @return MethodMock
      */
     public function mockStaticMethod($name) {
-        $reflectionClass = new \ReflectionClass($this->_parentClassName);
-        if ($reflectionClass->hasMethod($name)) {
-            if ($reflectionClass->getMethod($name)->isFinal()) {
+        if ($this->_parentClassName) {
+            $reflectionClass = new \ReflectionClass($this->_parentClassName);
+            if ($reflectionClass->hasMethod($name) && $reflectionClass->getMethod($name)->isFinal()) {
                 throw new Exception('Cannot mock final method `' . $name . '`');
             }
         }
