@@ -44,6 +44,19 @@ trait AbstractClassTrait {
     }
 
     /**
+     * @param string $name
+     * @param array  $arguments
+     * @throws Exception
+     * @return mixed
+     */
+    public function callOriginalMethod($name, array $arguments) {
+        if (!static::_hasParentMethod($name)) {
+            throw new Exception('Cannot find parent method declared');
+        }
+        return call_user_func_array(array('parent', $name), $arguments);
+    }
+
+    /**
      * @return MethodMockCollection
      */
     private function _getObjectMethodMockCollection() {
