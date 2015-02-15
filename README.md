@@ -9,7 +9,7 @@ Status
 Installation
 ------------
 
-Mocka is registered as composer package on (packagist)[https://packagist.org/packages/tomaszdurka/mocka].
+Mocka is registered as composer package on [packagist](https://packagist.org/packages/tomaszdurka/mocka).
 ```
 "tomaszdurka/mocka": "dev-master"
 ```
@@ -17,13 +17,21 @@ Mocka is registered as composer package on (packagist)[https://packagist.org/pac
 Library usage
 -----
 
-Basic library usage
+Mocking classes
 
 ```php
 $parentClassName = 'Exception';
 $class = new ClassMock('MockedException', $parentClassName);
 $exception1 = $class->newInstance(['exception message as constructor argument']);
 $exception2 = $class->newInstanceWithoutConstructor();
+```
+
+Creating object of mocked classes
+
+```php
+$class = new ClassMock('MockedException', 'Exception');
+$object = $class->newInstance('message');
+$object->getMessage();
 ```
 
 Mocking methods
@@ -35,7 +43,7 @@ $class->mockMethod('getMessage');
 $object = $class->newInstance('message');
 $object->mockMethod('getMessage');
 
-// It's possible to mock non-existent methods which will work once mocked
+// It's possible to mock non-existent methods - they will work once mocked
 $class->mockMethod('foo');
 
 // It's also possible to mock static methods
@@ -98,8 +106,18 @@ class TestCase extends \PHPUnit_Framework_TestCase {
     use \Mocka\MockaTrait;
 
     public function testFoo() {
+        // When using mocka trait there are two shortcut methods added to create mocked objects
         $countableExceptionClass = $this->mockClass('DateTime', ['Countable']);
-        $dateTimeObject = $this->mockObject('DateTime', '29-12-1984');
+        $dateTimeObject = $this->mockObject('DateTime', ['29-12-1984']);
+    }
+
+    public function testMockingMethod() {
+        $dateTimeObject = $this->mockObject('DateTime', ['29-12-1984']);
+        $this->assertSame('29', $dateTimeObject->format('d'));
+        $mockedFormatMethod = $dateTimeObject->mockMethod('format')->set('foo');
+        $this->assertSame(0, $mockedFormatMethod->getCallCount());
+        $this->assertSame('foo', $dateTimeObject->format('d'));
+        $this->assertSame(1, $mockedFormatMethod->getCallCount());
     }
 
     public function testMethodAssertions() {
