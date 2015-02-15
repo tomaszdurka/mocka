@@ -1,10 +1,15 @@
 Mocka
 =====
 
-Status
-------
 [![Travis Build](https://api.travis-ci.org/tomaszdurka/mocka.png)](https://travis-ci.org/tomaszdurka/mocka)
 [![Coverage Status](https://coveralls.io/repos/tomaszdurka/mocka/badge.png)](https://coveralls.io/r/tomaszdurka/mocka)
+
+About
+-----
+Mocka is clean, structured, but still very flexible mocking framework.
+It follows object-oriented guidelines to create mock classes, objects and their methods. Mocks can be modified during runtime before and once created or used.
+It has no assertion, expectations framework built-in - still fits well into any testing framework.
+
 
 Installation
 ------------
