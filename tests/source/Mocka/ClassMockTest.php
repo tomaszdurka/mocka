@@ -97,4 +97,8 @@ EOD;
         $classMock->newInstance();
         $this->assertTrue($constructorRun);
     }
+
+    public function testMockInternalClass() {
+        new ClassMock(null, 'DateTime');
+    }
 }
