@@ -80,15 +80,26 @@ class ClassAbstractMock {
         return $this->_className;
     }
 
-    private function _load() {
+    protected function _load() {
         $code = $this->generateCode();
         eval($code);
     }
 
     /**
+     * @return string[]
+     */
+    protected function _getReservedKeywords() {
+        return array('__halt_compiler', 'abstract', 'and', 'array', 'as', 'break', 'callable', 'case', 'catch', 'class', 'clone', 'const', 'continue',
+            'declare', 'default', 'die', 'do', 'echo', 'else', 'elseif', 'empty', 'enddeclare', 'endfor', 'endforeach', 'endif', 'endswitch',
+            'endwhile', 'eval', 'exit', 'extends', 'final', 'for', 'foreach', 'function', 'global', 'goto', 'if', 'implements', 'include',
+            'include_once', 'instanceof', 'insteadof', 'interface', 'isset', 'list', 'namespace', 'new', 'or', 'print', 'private', 'protected',
+            'public', 'require', 'require_once', 'return', 'static', 'switch', 'throw', 'trait', 'try', 'unset', 'use', 'var', 'while', 'xor');
+    }
+
+    /**
      * @return \ReflectionMethod[]
      */
-    private function _getMockableMethods() {
+    protected function _getMockableMethods() {
         /** @var \ReflectionMethod[] $methods */
         $methods = array();
         $interfaces = $this->_interfaces;
@@ -104,7 +115,16 @@ class ClassAbstractMock {
 
         $reflectionTrait = new \ReflectionClass('\\Mocka\\ClassTrait');
         $methods = array_filter($methods, function (\ReflectionMethod $reflectionMethod) use ($reflectionTrait) {
-            return !$reflectionMethod->isPrivate() && !$reflectionMethod->isFinal() && !$reflectionTrait->hasMethod($reflectionMethod->getName());
+            if ($reflectionMethod->isPrivate() || $reflectionMethod->isFinal()) {
+                return false;
+            }
+            if ($reflectionTrait->hasMethod($reflectionMethod->getName())) {
+                return false;
+            }
+            if (in_array($reflectionMethod->getName(), $this->_getReservedKeywords())) {
+                return false;
+            }
+            return true;
         });
         return $methods;
     }
