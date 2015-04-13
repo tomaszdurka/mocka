@@ -63,13 +63,12 @@ class ClassAbstractMock {
             }
             $class->addMethod($method);
         }
-        if (!array_key_exists('__construct', $mockableMethods)) {
-            $method = new MethodBlock('__construct');
-            $method->extractFromClosure(function () {
-                return $this->_callMethod(__FUNCTION__, func_get_args());
-            });
-            $class->addMethod($method);
-        }
+
+        $method = new MethodBlock('__construct');
+        $method->extractFromClosure(function () {
+            return $this->_callMethod(__FUNCTION__, func_get_args());
+        });
+        $class->addMethod($method);
         return $class->dump();
     }
 
@@ -115,6 +114,9 @@ class ClassAbstractMock {
 
         $reflectionTrait = new \ReflectionClass('\\Mocka\\ClassTrait');
         $methods = array_filter($methods, function (\ReflectionMethod $reflectionMethod) use ($reflectionTrait) {
+            if ($reflectionMethod->isConstructor()) {
+                return false;
+            }
             if ($reflectionMethod->isPrivate() || $reflectionMethod->isFinal()) {
                 return false;
             }

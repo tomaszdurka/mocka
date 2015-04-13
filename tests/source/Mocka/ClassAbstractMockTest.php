@@ -22,10 +22,6 @@ class $className extends $parentClassName {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 
-    public function __construct(\$arg1, \$arg2 = null) {
-        return \$this->_callMethod(__FUNCTION__, func_get_args());
-    }
-
     public function bar() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
@@ -43,6 +39,10 @@ class $className extends $parentClassName {
     }
 
     public function interfaceMethod() {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
+    public function __construct() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 }
