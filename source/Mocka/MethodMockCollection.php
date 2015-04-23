@@ -7,13 +7,21 @@ class MethodMockCollection {
     /** @var MethodMock[] */
     private $_mockedMethods = array();
 
+    public function __clone() {
+        foreach ($this->_mockedMethods as $name => $method) {
+            $this->_mockedMethods[$name] = clone $method;
+        }
+    }
+
     /**
      * @param string $name
      * @return MethodMock
      */
     public function mockMethod($name) {
         $name = (string) $name;
-        $this->_mockedMethods[$name] = new MethodMock();
+        if (!isset($this->_mockedMethods[$name])) {
+            $this->_mockedMethods[$name] = new MethodMock();
+        }
         return $this->_mockedMethods[$name];
     }
 
