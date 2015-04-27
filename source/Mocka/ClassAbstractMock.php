@@ -16,19 +16,24 @@ class ClassAbstractMock {
     /** @var array */
     private $_interfaces;
 
+    /** @var array */
+    private $_traits;
+
     /** @var ClassAbstractMock[] */
     private static $_mocks = [];
 
     /**
      * @param string|null $parentClassName
      * @param array       $interfaces
+     * @param array       $traits
      */
-    public function __construct($parentClassName, array $interfaces) {
+    public function __construct($parentClassName, array $interfaces, array $traits) {
         $this->_className = 'MockaAbstractClass' . uniqid();
         if (null !== $parentClassName) {
             $this->_parentClassName = (string) $parentClassName;
         }
         $this->_interfaces = $interfaces;
+        $this->_traits = $traits;
         $this->_load();
     }
 
@@ -42,6 +47,9 @@ class ClassAbstractMock {
         }
         foreach ($this->_interfaces as $interface) {
             $class->addInterface($interface);
+        }
+        foreach ($this->_traits as $trait) {
+            $class->addUse($trait);
         }
         $class->addUse('\Mocka\AbstractClassTrait');
 
@@ -134,15 +142,16 @@ class ClassAbstractMock {
     /**
      * @param string $parentClassName
      * @param array  $interfaces
-     * @return string|null
+     * @param array  $traits
+     * @return null|string
      */
-    public static function getClassName($parentClassName, array $interfaces) {
+    public static function getClassName($parentClassName, array $interfaces, array $traits) {
         sort($interfaces);
-        $mergedInterfaces = array_merge([$parentClassName], $interfaces);
+        $mergedInterfaces = array_merge([$parentClassName], $interfaces, $traits);
         $mergedInterfaces = array_filter($mergedInterfaces);
         $hash = join(',', $mergedInterfaces);
         if (!array_key_exists($hash, self::$_mocks)) {
-            self::$_mocks[$hash] = new self($parentClassName, $interfaces);
+            self::$_mocks[$hash] = new self($parentClassName, $interfaces, $traits);
         }
         return self::$_mocks[$hash]->_className;
     }
