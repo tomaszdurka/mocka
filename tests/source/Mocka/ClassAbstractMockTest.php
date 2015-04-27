@@ -11,7 +11,7 @@ class ClassAbstractMockTest extends \PHPUnit_Framework_TestCase {
     public function testGenerateCode() {
         $parentClassName = '\\MockaMocks\\AbstractClass';
 
-        $classMock = new ClassAbstractMock($parentClassName, []);
+        $classMock = new ClassAbstractMock($parentClassName, [], []);
         $className = $this->_getClassName($classMock);
         $expectedMockCode = <<<EOD
 class $className extends $parentClassName {
@@ -52,7 +52,7 @@ EOD;
 
     public function testGenerateCodeInterface() {
         $parentInterfaceName = '\\MockaMocks\\InterfaceMock';
-        $classMock = new ClassAbstractMock(null, [$parentInterfaceName]);
+        $classMock = new ClassAbstractMock(null, [$parentInterfaceName], []);
         $className = $this->_getClassName($classMock);
         $expectedMockCode = <<<EOD
 class $className implements $parentInterfaceName {
@@ -66,6 +66,25 @@ class $className implements $parentInterfaceName {
     public function interfaceMethod() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
+
+    public function __construct() {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+}
+EOD;
+        $this->assertSame($expectedMockCode, $classMock->generateCode());
+    }
+
+    public function testGenerateCodeTrait() {
+        $traitName = '\\MockaMocks\\TraitMock';
+        $classMock = new ClassAbstractMock(null, [], [$traitName]);
+        $className = $this->_getClassName($classMock);
+        $expectedMockCode = <<<EOD
+class $className {
+
+    use $traitName;
+
+    use \Mocka\AbstractClassTrait;
 
     public function __construct() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
