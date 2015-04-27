@@ -5,12 +5,13 @@ namespace Mocka;
 trait MockaTrait {
 
     /**
-     * @param string     $parentClassName
-     * @param array|null $interfaces
-     * @return \Mocka\ClassMock
+     * @param string|null $parentClassName
+     * @param array|null  $interfaces
+     * @param array|null  $traits
+     * @return ClassMock
      */
-    public function mockClass($parentClassName, array $interfaces = null) {
-        return new ClassMock(null, $parentClassName, $interfaces);
+    public function mockClass($parentClassName = null, array $interfaces = null, array $traits = null) {
+        return new ClassMock(null, $parentClassName, $interfaces, $traits);
     }
 
     /**
@@ -23,11 +24,20 @@ trait MockaTrait {
     }
 
     /**
-     * @param string     $className
+     * @param string $traitName
+     * @return ClassMock
+     */
+    public function mockTrait($traitName) {
+        $traitName = (string) $traitName;
+        return $this->mockClass(null, null, [$traitName]);
+    }
+
+    /**
+     * @param string     $parentClassName
      * @param array|null $constructorArgs
      * @return \Mocka\AbstractClassTrait
      */
-    public function mockObject($className, array $constructorArgs = null) {
-        return $this->mockClass($className)->newInstance($constructorArgs);
+    public function mockObject($parentClassName = null, array $constructorArgs = null) {
+        return $this->mockClass($parentClassName)->newInstance($constructorArgs);
     }
 }

@@ -26,9 +26,10 @@ class ClassMock {
      * @param string|null $className
      * @param string|null $parentClassName
      * @param array|null  $interfaces
+     * @param array|null  $traits
      */
-    public function __construct($className = null, $parentClassName = null, array $interfaces = null) {
-        $this->_parentClassName = ClassAbstractMock::getClassName($parentClassName, (array) $interfaces);
+    public function __construct($className = null, $parentClassName = null, array $interfaces = null, array $traits = null) {
+        $this->_parentClassName = ClassAbstractMock::getClassName($parentClassName, (array) $interfaces, (array) $traits);
         if (null === $className) {
             $className = $parentClassName . 'Mocka' . uniqid();
         }
