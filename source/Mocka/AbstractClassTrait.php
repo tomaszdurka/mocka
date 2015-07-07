@@ -8,7 +8,9 @@ trait AbstractClassTrait {
     private $_objectMethodMockCollection;
 
     public function __clone() {
-        $this->_objectMethodMockCollection = clone $this->_objectMethodMockCollection;
+        if ($this->_objectMethodMockCollection) {
+            $this->_objectMethodMockCollection = clone $this->_objectMethodMockCollection;
+        }
         if (static::_hasParentMethod('__clone')) {
             call_user_func(array('parent', '__clone'));
         }
@@ -16,7 +18,7 @@ trait AbstractClassTrait {
 
     /**
      * @param string $name
-     * @param array  $arguments
+     * @param array $arguments
      * @return mixed
      */
     public function __call($name, $arguments) {
@@ -45,7 +47,7 @@ trait AbstractClassTrait {
 
     /**
      * @param string $name
-     * @param array  $arguments
+     * @param array $arguments
      * @throws Exception
      * @return mixed
      */
@@ -82,7 +84,7 @@ trait AbstractClassTrait {
 
     /**
      * @param string $name
-     * @param array  $arguments
+     * @param array $arguments
      * @return mixed
      */
     private function _callMethod($name, array $arguments) {
@@ -120,7 +122,7 @@ trait AbstractClassTrait {
 
     /**
      * @param string $name
-     * @param array  $arguments
+     * @param array $arguments
      * @return mixed
      */
     public static function __callStatic($name, $arguments) {
@@ -137,7 +139,7 @@ trait AbstractClassTrait {
 
     /**
      * @param string $name
-     * @param array  $arguments
+     * @param array $arguments
      * @return mixed
      */
     private static function _callStaticMethod($name, array $arguments) {
