@@ -4,7 +4,7 @@ namespace Mocka;
 
 class MethodMockCollection {
 
-    /** @var MethodMock[] */
+    /** @var FunctionMock[] */
     private $_mockedMethods = array();
 
     public function __clone() {
@@ -15,12 +15,12 @@ class MethodMockCollection {
 
     /**
      * @param string $name
-     * @return MethodMock
+     * @return FunctionMock
      */
     public function mockMethod($name) {
         $name = (string) $name;
         if (!isset($this->_mockedMethods[$name])) {
-            $this->_mockedMethods[$name] = new MethodMock();
+            $this->_mockedMethods[$name] = new FunctionMock();
         }
         return $this->_mockedMethods[$name];
     }

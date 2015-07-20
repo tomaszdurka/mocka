@@ -2,12 +2,12 @@
 
 namespace MockaTests;
 
-use Mocka\MethodMock;
+use Mocka\FunctionMock;
 
-class MethodMockTest extends \PHPUnit_Framework_TestCase {
+class FunctionMockTest extends \PHPUnit_Framework_TestCase {
 
     public function testIntegrated() {
-        $method = new MethodMock();
+        $method = new FunctionMock();
         $method->set(function () {
             return 'foo';
         });
@@ -31,7 +31,7 @@ class MethodMockTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testAssertingArguments() {
-        $method = new MethodMock();
+        $method = new FunctionMock();
         $method->set(function($foo) {
             $this->assertSame('bar', $foo);
         });
@@ -43,16 +43,22 @@ class MethodMockTest extends \PHPUnit_Framework_TestCase {
      * @expectedExceptionMessage must be an instance of Mocka
      */
     public function testTypeHinting() {
-        $method = new MethodMock();
+        $method = new FunctionMock();
         $method->set(function (\Mocka $mocka) {
         });
         $method->invoke(['Invalid arg']);
     }
 
     public function testGetCallCount() {
-        $method = new MethodMock();
+        $method = new FunctionMock();
         $this->assertSame(0, $method->getCallCount());
         $method->invoke();
         $this->assertSame(1, $method->getCallCount());
+    }
+
+    public function testCallable() {
+        $method = new FunctionMock();
+        $method->set('foo');
+        $this->assertSame('foo', $method());
     }
 }

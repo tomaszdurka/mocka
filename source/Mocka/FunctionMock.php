@@ -2,7 +2,7 @@
 
 namespace Mocka;
 
-class MethodMock {
+class FunctionMock {
 
     /** @var \Closure */
     private $_defaultClosure;
@@ -30,7 +30,7 @@ class MethodMock {
     }
 
     /**
-     * @param int|int[]       $at
+     * @param int|int[] $at
      * @param string|\Closure $body
      * @return static
      */
@@ -60,6 +60,10 @@ class MethodMock {
      */
     public function getCallCount() {
         return $this->_counter;
+    }
+
+    public function __invoke() {
+        return $this->invoke(func_get_args());
     }
 
     /**
