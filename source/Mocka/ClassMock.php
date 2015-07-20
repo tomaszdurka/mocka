@@ -105,7 +105,7 @@ class ClassMock {
     /**
      * @param string $name
      * @throws Exception
-     * @return MethodMock
+     * @return FunctionMock
      */
     public function mockMethod($name) {
         if ($this->_parentClassName) {
@@ -127,7 +127,7 @@ class ClassMock {
     /**
      * @param string $name
      * @throws Exception
-     * @return MethodMock
+     * @return FunctionMock
      */
     public function mockStaticMethod($name) {
         if ($this->_parentClassName) {

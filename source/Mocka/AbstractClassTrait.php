@@ -28,7 +28,7 @@ trait AbstractClassTrait {
     /**
      * @param string $name
      * @throws Exception
-     * @return MethodMock
+     * @return FunctionMock
      */
     public function mockMethod($name) {
         $reflectionClass = new \ReflectionClass($this);
