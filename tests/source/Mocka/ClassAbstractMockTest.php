@@ -84,6 +84,7 @@ class $className {
 
     use $traitName {
         traitMethod as _mocka_traitMethod;
+        bar as _mocka_bar;
     }
 
     use \Mocka\AbstractClassTrait;
@@ -93,6 +94,10 @@ class $className {
     }
 
     public function traitMethod() {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
+    public function bar() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 
