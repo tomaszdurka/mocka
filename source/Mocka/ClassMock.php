@@ -4,6 +4,7 @@ namespace Mocka;
 
 use CodeGenerator\ClassBlock;
 use CodeGenerator\PropertyBlock;
+use CodeGenerator\TraitBlock;
 
 class ClassMock {
 
@@ -98,7 +99,7 @@ class ClassMock {
         if ($this->_parentClassName) {
             $class->setParentClassName($this->_parentClassName);
         }
-        $class->addUse('\Mocka\ClassTrait');
+        $class->addUse(new TraitBlock('\Mocka\ClassTrait'));
         return $class->dump();
     }
 
