@@ -54,7 +54,7 @@ class ClassAbstractMock {
             $trait = new TraitBlock($trait);
             foreach ($reflectionTrait->getMethods() as $reflectionMethod) {
                 if (!$reflectionMethod->isAbstract()) {
-                    $trait->addAlias($reflectionMethod->getName(), "_mocka_{$reflectionMethod->getName()}");
+                    $trait->addAlias($reflectionMethod->getName(), "_mockaTraitAlias_{$reflectionMethod->getName()}");
                 }
             }
             $class->addUse($trait);

@@ -95,7 +95,7 @@ trait AbstractClassTrait {
             return $this->_getClassMethodMockCollection()->callMockedMethod($name, $arguments);
         }
         if (static::_hasTraitMethod($name)) {
-            return call_user_func_array([$this, "_mocka_{$name}"], $arguments);
+            return call_user_func_array([$this, "_mockaTraitAlias_{$name}"], $arguments);
         }
         if (static::_hasParentMethod($name)) {
             return call_user_func_array(array('parent', $name), $arguments);

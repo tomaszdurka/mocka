@@ -83,8 +83,8 @@ EOD;
 class $className {
 
     use $traitName {
-        traitMethod as _mocka_traitMethod;
-        bar as _mocka_bar;
+        traitMethod as _mockaTraitAlias_traitMethod;
+        bar as _mockaTraitAlias_bar;
     }
 
     use \Mocka\AbstractClassTrait;
