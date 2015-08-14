@@ -4,6 +4,7 @@ namespace Mocka;
 
 use CodeGenerator\ClassBlock;
 use CodeGenerator\MethodBlock;
+use CodeGenerator\TraitBlock;
 
 class ClassAbstractMock {
 
@@ -49,9 +50,16 @@ class ClassAbstractMock {
             $class->addInterface($interface);
         }
         foreach ($this->_traits as $trait) {
+            $reflectionTrait = new \ReflectionClass($trait);
+            $trait = new TraitBlock($trait);
+            foreach ($reflectionTrait->getMethods() as $reflectionMethod) {
+                if (!$reflectionMethod->isAbstract()) {
+                    $trait->addAlias($reflectionMethod->getName(), "_mocka_{$reflectionMethod->getName()}");
+                }
+            }
             $class->addUse($trait);
         }
-        $class->addUse('\Mocka\AbstractClassTrait');
+        $class->addUse(new TraitBlock('\Mocka\AbstractClassTrait'));
 
         $mockableMethods = $this->_getMockableMethods();
         foreach ($mockableMethods as $reflectionMethod) {
@@ -109,7 +117,7 @@ class ClassAbstractMock {
     protected function _getMockableMethods() {
         /** @var \ReflectionMethod[] $methods */
         $methods = array();
-        $interfaces = $this->_interfaces;
+        $interfaces = array_merge($this->_interfaces, $this->_traits);
         if ($this->_parentClassName) {
             $interfaces[] = $this->_parentClassName;
         }

@@ -18,7 +18,7 @@ trait AbstractClassTrait {
 
     /**
      * @param string $name
-     * @param array $arguments
+     * @param array  $arguments
      * @return mixed
      */
     public function __call($name, $arguments) {
@@ -47,7 +47,7 @@ trait AbstractClassTrait {
 
     /**
      * @param string $name
-     * @param array $arguments
+     * @param array  $arguments
      * @throws Exception
      * @return mixed
      */
@@ -84,7 +84,7 @@ trait AbstractClassTrait {
 
     /**
      * @param string $name
-     * @param array $arguments
+     * @param array  $arguments
      * @return mixed
      */
     private function _callMethod($name, array $arguments) {
@@ -93,6 +93,9 @@ trait AbstractClassTrait {
         }
         if ($this->_getClassMethodMockCollection()->hasMockedMethod($name)) {
             return $this->_getClassMethodMockCollection()->callMockedMethod($name, $arguments);
+        }
+        if (static::_hasTraitMethod($name)) {
+            return call_user_func_array([$this, "_mocka_{$name}"], $arguments);
         }
         if (static::_hasParentMethod($name)) {
             return call_user_func_array(array('parent', $name), $arguments);
@@ -121,8 +124,22 @@ trait AbstractClassTrait {
     }
 
     /**
+     * @param $name
+     * @return bool
+     */
+    private static function _hasTraitMethod($name) {
+        $mockClass = static::_getMockClass();
+        $reflectionsClass = new \ReflectionClass($mockClass->getParentClassName());
+        foreach ($reflectionsClass->getTraits() as $reflectionTrait) {
+            if ($reflectionTrait->hasMethod($name)) {
+                return true;
+            }
+        }
+    }
+
+    /**
      * @param string $name
-     * @param array $arguments
+     * @param array  $arguments
      * @return mixed
      */
     public static function __callStatic($name, $arguments) {
@@ -139,7 +156,7 @@ trait AbstractClassTrait {
 
     /**
      * @param string $name
-     * @param array $arguments
+     * @param array  $arguments
      * @return mixed
      */
     private static function _callStaticMethod($name, array $arguments) {
