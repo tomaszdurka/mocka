@@ -82,9 +82,19 @@ EOD;
         $expectedMockCode = <<<EOD
 class $className {
 
-    use $traitName;
+    use $traitName {
+        traitMethod as _mocka_traitMethod;
+    }
 
     use \Mocka\AbstractClassTrait;
+
+    public function abstractTraitMethod() {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
+    public function traitMethod() {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
 
     public function __construct() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());

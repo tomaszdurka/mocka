@@ -61,6 +61,17 @@ EOD;
         $classMock->mockMethod('zoo');
     }
 
+    public function testMockMethodFromTrait() {
+        $classMock = new ClassMock(null, '\\MockaMocks\\AbstractClass', null, ['\\MockaMocks\\TraitMock']);
+
+        /** @var AbstractClassTrait|AbstractClass $object */
+        $object = $classMock->newInstanceWithoutConstructor();
+        $this->assertSame('traitbar', $object->bar());
+
+        $classMock->mockMethod('bar');
+        $this->assertSame(null, $object->bar());
+    }
+
     public function testMockStaticMethod() {
         $classMock = new ClassMock(null, '\\MockaMocks\\AbstractClass');
         /** @var AbstractClass $className */
