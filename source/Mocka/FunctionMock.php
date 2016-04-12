@@ -10,14 +10,14 @@ class FunctionMock {
     /** @var \Closure[] */
     private $_orderedClosures;
 
-    /** @var int */
-    private $_counter;
+    /** @var Invocations */
+    private $_invocations;
 
     public function __construct() {
         $this->_orderedClosures = array();
         $this->_defaultClosure = function () {
         };
-        $this->_counter = 0;
+        $this->_invocations = new Invocations();
     }
 
     /**
@@ -50,16 +50,43 @@ class FunctionMock {
      */
     public function invoke(array $arguments = null) {
         $arguments = (array) $arguments;
-        $closure = $this->_getClosure($this->_counter);
-        $this->_counter++;
-        return call_user_func_array($closure, $arguments);
+        $closure = $this->_getClosure($this->getInvocations()->getCount());
+
+        $invocation = new Invocation($arguments);
+        $this->getInvocations()->add($invocation);
+        $result = call_user_func_array($closure, $arguments);
+
+        $invocation->setReturnValue($result);
+        return $result;
+    }
+
+    /**
+     * @return Invocations
+     */
+    public function getInvocations() {
+        return $this->_invocations;
+    }
+
+    /**
+     * @return Invocations
+     */
+    public function getCalls() {
+        return $this->getInvocations();
+    }
+
+    /**
+     * @param int $number
+     * @return Invocation
+     */
+    public function getCall($number) {
+        return $this->getCalls()->get($number);
     }
 
     /**
      * @return int
      */
     public function getCallCount() {
-        return $this->_counter;
+        return $this->getInvocations()->getCount();
     }
 
     public function __invoke() {
@@ -72,7 +99,7 @@ class FunctionMock {
      */
     private function _getClosure($at) {
         $at = (int) $at;
-        if (array_key_exists($this->_counter, $this->_orderedClosures)) {
+        if (array_key_exists($at, $this->_orderedClosures)) {
             return $this->_orderedClosures[$at];
         }
         return $this->_defaultClosure;
