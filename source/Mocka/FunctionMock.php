@@ -83,6 +83,13 @@ class FunctionMock {
     }
 
     /**
+     * @return Invocation
+     */
+    public function getLastCall() {
+        return $this->getInvocations()->getLast();
+    }
+
+    /**
      * @return int
      */
     public function getCallCount() {
