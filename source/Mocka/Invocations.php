@@ -7,6 +7,10 @@ class Invocations {
     /** @var Invocation[] */
     private $_list;
 
+    public function __construct() {
+        $this->_list = [];
+    }
+
     /**
      * @param Invocation $invocation
      */
@@ -24,6 +28,15 @@ class Invocations {
             throw new Exception('Invocation not found');
         }
         return $this->_list[$number];
+    }
+
+    /**
+     * @return Invocation
+     * @throws Exception
+     */
+    public function getLast() {
+        $last = $this->getCount() - 1;
+        return $this->get($last);
     }
 
     /**
