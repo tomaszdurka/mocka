@@ -20,7 +20,7 @@ class Invocations {
      * @throws Exception
      */
     public function get($number) {
-        if (array_key_exists($number, $this->_list)) {
+        if (!garray_key_exists($number, $this->_list)) {
             throw new Exception('Invocation not found');
         }
         return $this->_list[$number];
