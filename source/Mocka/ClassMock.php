@@ -3,7 +3,6 @@
 namespace Mocka;
 
 use CodeGenerator\ClassBlock;
-use Mocka\Invokable\AbstractInvokable;
 use Mocka\Invokable\Stub;
 use Mocka\Overrides\Manager;
 use Mocka\Overrides\MethodOverrides\ClassOverrides;

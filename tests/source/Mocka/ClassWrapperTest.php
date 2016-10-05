@@ -3,7 +3,6 @@
 namespace MockaTests\Mocka;
 
 use Mocka\ClassWrapper;
-use Mocka\ClassMock;
 
 class ClassWrapperTest extends \PHPUnit_Framework_TestCase {
 

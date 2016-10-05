@@ -5,7 +5,6 @@ namespace MockaTests\Mocka;
 use Mocka\ClassMock;
 use Mocka\ClassMockFactory;
 use Mocka\ClassMockTrait;
-use Mocka\ClassWrapper;
 use MockaMocks\AbstractClass;
 
 

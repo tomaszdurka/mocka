@@ -4,7 +4,6 @@ namespace Mocka\Overrides\MethodOverrides;
 
 use Mocka\Overrides\Context\AbstractContext;
 use Mocka\Overrides\Context\ClassMethod;
-use Mocka\Overrides\Context\StaticMethod;
 use Mocka\Overrides\Manager;
 use Mocka\Overrides\Override;
 use Mocka\OverridableInterface;

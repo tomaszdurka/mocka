@@ -2,8 +2,6 @@
 
 namespace Mocka\Overrides\Context;
 
-use Mocka\Invokable\AbstractInvokable;
-
 abstract class AbstractContext {
 
     /**

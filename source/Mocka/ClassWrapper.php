@@ -5,7 +5,6 @@ namespace Mocka;
 use CodeGenerator\ClassBlock;
 use CodeGenerator\MethodBlock;
 use CodeGenerator\TraitBlock;
-use Mocka\OverridableInterface;
 
 class ClassWrapper {
 

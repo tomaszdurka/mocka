@@ -2,8 +2,7 @@
 
 namespace MockaTests\Mocka;
 
-use Mocka\ClassMock;
-use \Mocka\Mocka;
+use Mocka\Mocka;
 
 class ClassTraitTest extends \PHPUnit_Framework_TestCase {
 

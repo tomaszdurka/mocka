@@ -3,10 +3,6 @@
 namespace Mocka\Overrides;
 
 use Mocka\Overrides\Context\AbstractContext;
-use Mocka\Overrides\Context\ClassMethod;
-use Mocka\Overrides\Context\GlobalFunction;
-use Mocka\Overrides\Context\InstanceMethod;
-use Mocka\Overrides\Context\StaticMethod;
 
 class Manager {
 
