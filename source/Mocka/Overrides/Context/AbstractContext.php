@@ -10,4 +10,9 @@ abstract class AbstractContext {
      */
     abstract public function equals(AbstractContext $context);
 
+    /**
+     * @return string
+     */
+    abstract public function getClassName();
+
 }

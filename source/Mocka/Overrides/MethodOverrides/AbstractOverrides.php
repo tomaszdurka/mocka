@@ -2,7 +2,9 @@
 
 namespace Mocka\Overrides\MethodOverrides;
 
+use Mocka\Classes\ClassDefinition;
 use Mocka\Exception;
+use Mocka\Invokables\Invokable\Spy;
 use Mocka\Invokables\Invokable\Stub;
 use Mocka\Overrides\Context\AbstractContext;
 use Mocka\Overrides\Manager;
@@ -60,7 +62,25 @@ abstract class AbstractOverrides {
     public function stub($methodName) {
         $context = $this->_createContext($methodName);
         $this->_manager->removeByContext($context);
+        
         $invokable = new Stub();
+        $override = new Override($context, $invokable);
+        $this->_manager->add($override);
+        return $invokable;
+    }
+
+    /**
+     * @param string $methodName
+     * @return Spy
+     */
+    public function spy($methodName) {
+        $context = $this->_createContext($methodName);
+        $this->_manager->removeByContext($context);
+        
+        $classDefinition = new ClassDefinition(get_parent_class($context->getClassName()));
+        $originalMethodReflection = $classDefinition->findOriginalMethodReflection($methodName);
+        $invokable = new Spy($originalMethodReflection);
+        
         $override = new Override($context, $invokable);
         $this->_manager->add($override);
         return $invokable;

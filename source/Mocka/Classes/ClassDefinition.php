@@ -5,6 +5,7 @@ namespace Mocka\Classes;
 use Mocka\Invokables\Invokable\AbstractInvokable;
 use Mocka\Invokables\Invokable\Spy;
 use Mocka\Invokables\Invokable\Stub;
+use Mocka\Overrides\OverridableInterface;
 
 class ClassDefinition {
 
@@ -23,7 +24,7 @@ class ClassDefinition {
      * @return AbstractInvokable|null
      */
     public function findOriginalMethod($methodName) {
-        $method = $this->_findOriginalMethodReflection($methodName);
+        $method = $this->findOriginalMethodReflection($methodName);
         if ($method) {
             if ($method->isAbstract()) {
                 return new Stub();
@@ -38,7 +39,7 @@ class ClassDefinition {
      * @param string $methodName
      * @return \ReflectionMethod|null
      */
-    private function _findOriginalMethodReflection($methodName) {
+    public function findOriginalMethodReflection($methodName) {
         $class = new \ReflectionClass($this->_className);
 
         $traitAliasName = '_mockaTraitAlias_' . $methodName;
@@ -46,10 +47,24 @@ class ClassDefinition {
             return $class->getMethod($traitAliasName);
         }
 
-        if ($class->getParentClass() && $class->getParentClass()->hasMethod($methodName)) {
-            return $class->getParentClass()->getMethod($methodName);
+        $parentClass = $this->_findOriginalParentClass($class);
+        if ($parentClass && $parentClass->hasMethod($methodName)) {
+            return $parentClass->getMethod($methodName);
         }
 
+        return null;
+    }
+
+    /**
+     * @param \ReflectionClass $class
+     * @return \ReflectionClass|null
+     */
+    protected function _findOriginalParentClass(\ReflectionClass $class) {
+        while ($class = $class->getParentClass()) {
+            if (!$class->implementsInterface(OverridableInterface::class)) {
+                return $class;
+            }
+        }
         return null;
     }
 }

@@ -19,6 +19,10 @@ class InstanceMethod extends AbstractContext {
         $this->_methodName = (string) $methodName;
     }
 
+    public function getClassName() {
+        return get_class($this->getInstance());
+    }
+
     /**
      * @return mixed
      */

@@ -62,15 +62,6 @@ trait ClassMockTrait {
      * @param string $name
      * @param array  $arguments
      * @return mixed
-     */
-    public static function __callStatic($name, $arguments) {
-        return static::_callStaticMethod($name, $arguments);
-    }
-
-    /**
-     * @param string $name
-     * @param array  $arguments
-     * @return mixed
      * @throws Exception
      */
     private static function _callStaticMethod($name, array $arguments) {

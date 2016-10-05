@@ -42,7 +42,7 @@ class ClassOverrides extends AbstractOverrides {
         if ($override) {
             return $override;
         }
-
+        
         $parentClassOverrides = $this->getParentClassOverrides();
         if ($parentClassOverrides) {
             return $parentClassOverrides->find($methodName);
