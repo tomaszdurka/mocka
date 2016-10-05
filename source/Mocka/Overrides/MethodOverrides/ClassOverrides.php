@@ -6,7 +6,7 @@ use Mocka\Overrides\Context\AbstractContext;
 use Mocka\Overrides\Context\ClassMethod;
 use Mocka\Overrides\Manager;
 use Mocka\Overrides\Override;
-use Mocka\OverridableInterface;
+use Mocka\Overrides\OverridableInterface;
 
 class ClassOverrides extends AbstractOverrides {
 
