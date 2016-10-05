@@ -3,31 +3,34 @@
 namespace MockaTests\Mocka;
 
 use Mocka\ClassMock;
-use Mocka\AbstractClassTrait;
+use Mocka\ClassMockFactory;
+use Mocka\ClassMockTrait;
+use Mocka\ClassWrapper;
 use MockaMocks\AbstractClass;
+
+
 
 class ClassMockTest extends \PHPUnit_Framework_TestCase {
 
     public function testGenerateCode() {
         $parentClassName = '\\MockaMocks\\AbstractClass';
 
-        $classMock = new ClassMock('\\Nested\\FooNamespace\\FooClass', $parentClassName);
+        $classMock = new ClassMock($parentClassName, '\\Nested\\FooNamespace\\FooClass');
         $parentMockClassName = $classMock->getParentClassName();
         $expectedMockCode = <<<EOD
 namespace Nested\\FooNamespace;
 
-class FooClass extends \\$parentMockClassName {
-
-    use \\Mocka\\ClassTrait;
+class FooClass extends $parentMockClassName {
 }
 EOD;
         $this->assertSame($expectedMockCode, $classMock->generateCode());
     }
 
     public function testMockMethod() {
-        $parentClassName = '\\MockaMocks\\AbstractClass';
-        $classMock = new ClassMock(null, $parentClassName);
-        /** @var AbstractClassTrait|AbstractClass $object */
+        $factory = new ClassMockFactory();
+        $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
+
+        /** @var ClassMockTrait|AbstractClass $object */
         $object = $classMock->newInstanceWithoutConstructor();
 
         $this->assertSame('bar', $object->bar());
@@ -39,9 +42,10 @@ EOD;
     }
 
     public function testUnmockMethod() {
-        $parentClassName = '\\MockaMocks\\AbstractClass';
-        $classMock = new ClassMock(null, $parentClassName);
-        /** @var AbstractClassTrait|AbstractClass $object */
+        $factory = new ClassMockFactory();
+        $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
+
+        /** @var ClassMockTrait|AbstractClass $object */
         $object = $classMock->newInstanceWithoutConstructor();
 
         $this->assertSame('bar', $object->bar());
@@ -53,18 +57,11 @@ EOD;
         $this->assertSame('bar', $object->bar());
     }
 
-    /**
-     * @expectedException \Mocka\Exception
-     */
-    public function testMockMethodFinal() {
-        $classMock = new ClassMock(null, '\\MockaMocks\\AbstractClass');
-        $classMock->mockMethod('zoo');
-    }
-
     public function testMockMethodFromTrait() {
-        $classMock = new ClassMock(null, '\\MockaMocks\\AbstractClass', null, ['\\MockaMocks\\TraitMock']);
+        $factory = new ClassMockFactory();
+        $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass', null, ['\\MockaMocks\\TraitMock']);
 
-        /** @var AbstractClassTrait|AbstractClass $object */
+        /** @var ClassMockTrait|AbstractClass $object */
         $object = $classMock->newInstanceWithoutConstructor();
         $this->assertSame('traitbar', $object->bar());
 
@@ -73,24 +70,21 @@ EOD;
     }
 
     public function testMockStaticMethod() {
-        $classMock = new ClassMock(null, '\\MockaMocks\\AbstractClass');
-        /** @var AbstractClass $className */
+        $factory = new ClassMockFactory();
+        $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
         $className = $classMock->getClassName();
 
         $this->assertSame('jar', $className::jar());
-        $classMock->mockStaticMethod('jar')->set(function () {
+        $classMock->mockMethod('jar')->set(function () {
             return 'foo';
         });
         $this->assertSame('foo', $className::jar());
-
-        $classMock->mockStaticMethod('nonexistent')->set(function () {
-            return 'bar';
-        });
-        $this->assertSame('bar', $className::nonexistent());
     }
 
     public function testNewInstanceConstructorArgs() {
-        $classMock = new ClassMock(null, '\\MockaMocks\\AbstractClass');
+        $factory = new ClassMockFactory();
+        $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
+
         $constructorArgs = ['foo', 'bar'];
         /** @var AbstractClass $object */
         $object = $classMock->newInstance($constructorArgs);
@@ -98,7 +92,8 @@ EOD;
     }
 
     public function testNewInstanceWithoutConstructor() {
-        $classMock = new ClassMock();
+        $factory = new ClassMockFactory();
+        $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
         $constructorRun = false;
         $classMock->mockMethod('__construct')->set(function() use (&$constructorRun) {
             $constructorRun = true;

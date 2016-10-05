@@ -3,8 +3,10 @@
 namespace Mocka;
 
 use CodeGenerator\ClassBlock;
-use CodeGenerator\PropertyBlock;
-use CodeGenerator\TraitBlock;
+use Mocka\Invokable\AbstractInvokable;
+use Mocka\Invokable\Stub;
+use Mocka\Overrides\Manager;
+use Mocka\Overrides\MethodOverrides\ClassOverrides;
 
 class ClassMock {
 
@@ -17,35 +19,24 @@ class ClassMock {
     /** @var string|null */
     private $_parentClassName;
 
-    /** @var MethodMockCollection */
-    private $_methodMockCollectionInstance;
-
-    /** @var MethodMockCollection */
-    private $_methodMockCollectionStatic;
-
     /**
+     * ClassMock constructor.
+     * @param string      $wrapperClassName
      * @param string|null $className
-     * @param string|null $parentClassName
-     * @param array|null  $interfaces
-     * @param array|null  $traits
      */
-    public function __construct($className = null, $parentClassName = null, array $interfaces = null, array $traits = null) {
-        $this->_parentClassName = ClassAbstractMock::getClassName($parentClassName, (array) $interfaces, (array) $traits);
+    public function __construct($wrapperClassName, $className = null) {
+        $this->_parentClassName = $wrapperClassName;
         if (null === $className) {
-            $className = $parentClassName . 'Mocka' . uniqid();
+            $className = $wrapperClassName . '\\Mocka' . uniqid();
         }
         $this->_extractNameAndNamespace($className);
-        $this->_methodMockCollectionInstance = new MethodMockCollection();
-        $this->_methodMockCollectionStatic = new MethodMockCollection();
-
-        $this->_load();
     }
 
     /**
      * @return string
      */
     public function getClassName() {
-        $className = '\\';
+        $className = '';
         if ($this->_namespace) {
             $className .= $this->_namespace . '\\';
         }
@@ -64,15 +55,12 @@ class ClassMock {
      * @return string|null
      */
     public function getMockedClassName() {
-        if (!$this->_parentClassName) {
-            return null;
-        }
         return get_parent_class($this->_parentClassName);
     }
 
     /**
      * @param array|null $constructorArgs
-     * @return \Mocka\AbstractClassTrait
+     * @return \Mocka\ClassMockTrait
      */
     public function newInstance(array $constructorArgs = null) {
         $constructorArgs = (array) $constructorArgs;
@@ -81,7 +69,7 @@ class ClassMock {
     }
 
     /**
-     * @return \Mocka\AbstractClassTrait
+     * @return \Mocka\ClassMockTrait
      */
     public function newInstanceWithoutConstructor() {
         $mockedClassReflection = new \ReflectionClass($this->getClassName());
@@ -99,74 +87,34 @@ class ClassMock {
         if ($this->_parentClassName) {
             $class->setParentClassName($this->_parentClassName);
         }
-        $class->addUse(new TraitBlock('\Mocka\ClassTrait'));
         return $class->dump();
     }
 
     /**
      * @param string $name
      * @throws Exception
-     * @return FunctionMock
+     * @return Stub
      */
     public function mockMethod($name) {
-        if ($this->_parentClassName) {
-            $reflectionClass = new \ReflectionClass($this->_parentClassName);
-            if ($reflectionClass->hasMethod($name) && $reflectionClass->getMethod($name)->isFinal()) {
-                throw new Exception('Cannot mock final method `' . $name . '`');
-            }
-        }
-        return $this->_methodMockCollectionInstance->mockMethod($name);
+        $manager = Manager::getInstance();
+        $classOverrides = new ClassOverrides($manager, $this->getClassName());
+        return $classOverrides->stub($name);
     }
 
     /**
      * @param string $name
      */
     public function unmockMethod($name) {
-        $this->_methodMockCollectionInstance->unmockMethod($name);
+        $manager = Manager::getInstance();
+        $classOverrides = new ClassOverrides($manager, $this->getClassName());
+        $classOverrides->remove($name);
     }
+    
+    
 
-    /**
-     * @param string $name
-     * @throws Exception
-     * @return FunctionMock
-     */
-    public function mockStaticMethod($name) {
-        if ($this->_parentClassName) {
-            $reflectionClass = new \ReflectionClass($this->_parentClassName);
-            if ($reflectionClass->hasMethod($name) && $reflectionClass->getMethod($name)->isFinal()) {
-                throw new Exception('Cannot mock final method `' . $name . '`');
-            }
-        }
-        return $this->_methodMockCollectionStatic->mockMethod($name);
-    }
-
-    /**
-     * @param string $name
-     */
-    public function unmockStaticMethod($name) {
-        $this->_methodMockCollectionStatic->unmockMethod($name);
-    }
-
-    /**
-     * @return MethodMockCollection
-     */
-    public function getMethodMockCollectionInstance() {
-        return $this->_methodMockCollectionInstance;
-    }
-
-    /**
-     * @return MethodMockCollection
-     */
-    public function getMethodMockCollectionStatic() {
-        return $this->_methodMockCollectionStatic;
-    }
-
-    private function _load() {
+    public function load() {
         $code = $this->generateCode();
         eval($code);
-        /** @var AbstractClassTrait $className */
-        $className = $this->getClassName();
-        $className::setMockClass($this);
     }
 
     /**

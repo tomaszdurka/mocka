@@ -5,8 +5,9 @@ namespace Mocka;
 use CodeGenerator\ClassBlock;
 use CodeGenerator\MethodBlock;
 use CodeGenerator\TraitBlock;
+use Mocka\OverridableInterface;
 
-class ClassAbstractMock {
+class ClassWrapper {
 
     /** @var string */
     private $_className;
@@ -20,7 +21,7 @@ class ClassAbstractMock {
     /** @var array */
     private $_traits;
 
-    /** @var ClassAbstractMock[] */
+    /** @var ClassWrapper[] */
     private static $_mocks = [];
 
     /**
@@ -29,13 +30,13 @@ class ClassAbstractMock {
      * @param array       $traits
      */
     public function __construct($parentClassName, array $interfaces, array $traits) {
-        $this->_className = 'MockaAbstractClass' . uniqid();
+        $this->_className = 'MockaClassWrapper' . uniqid();
         if (null !== $parentClassName) {
             $this->_parentClassName = (string) $parentClassName;
         }
+        sort($interfaces);
         $this->_interfaces = $interfaces;
         $this->_traits = $traits;
-        $this->_load();
     }
 
     /**
@@ -49,6 +50,7 @@ class ClassAbstractMock {
         foreach ($this->_interfaces as $interface) {
             $class->addInterface($interface);
         }
+        $class->addInterface(OverridableInterface::class);
         foreach ($this->_traits as $trait) {
             $reflectionTrait = new \ReflectionClass($trait);
             $trait = new TraitBlock($trait);
@@ -59,7 +61,7 @@ class ClassAbstractMock {
             }
             $class->addUse($trait);
         }
-        $class->addUse(new TraitBlock('\Mocka\AbstractClassTrait'));
+        $class->addUse(new TraitBlock('\Mocka\ClassMockTrait'));
 
         $mockableMethods = $this->_getMockableMethods();
         foreach ($mockableMethods as $reflectionMethod) {
@@ -91,11 +93,11 @@ class ClassAbstractMock {
     /**
      * @return string
      */
-    protected function _getClassName() {
+    public function getClassName() {
         return $this->_className;
     }
 
-    protected function _load() {
+    public function load() {
         $code = $this->generateCode();
         eval($code);
     }
@@ -104,11 +106,11 @@ class ClassAbstractMock {
      * @return string[]
      */
     protected function _getReservedKeywords() {
-        return array('__halt_compiler', 'abstract', 'and', 'array', 'as', 'break', 'callable', 'case', 'catch', 'class', 'clone', 'const', 'continue',
+        return ['__halt_compiler', 'abstract', 'and', 'array', 'as', 'break', 'callable', 'case', 'catch', 'class', 'clone', 'const', 'continue',
             'declare', 'default', 'die', 'do', 'echo', 'else', 'elseif', 'empty', 'enddeclare', 'endfor', 'endforeach', 'endif', 'endswitch',
             'endwhile', 'eval', 'exit', 'extends', 'final', 'for', 'foreach', 'function', 'global', 'goto', 'if', 'implements', 'include',
             'include_once', 'instanceof', 'insteadof', 'interface', 'isset', 'list', 'namespace', 'new', 'or', 'print', 'private', 'protected',
-            'public', 'require', 'require_once', 'return', 'static', 'switch', 'throw', 'trait', 'try', 'unset', 'use', 'var', 'while', 'xor');
+            'public', 'require', 'require_once', 'return', 'static', 'switch', 'throw', 'trait', 'try', 'unset', 'use', 'var', 'while', 'xor'];
     }
 
     /**
@@ -116,7 +118,7 @@ class ClassAbstractMock {
      */
     protected function _getMockableMethods() {
         /** @var \ReflectionMethod[] $methods */
-        $methods = array();
+        $methods = [];
         $interfaces = array_merge($this->_interfaces, $this->_traits);
         if ($this->_parentClassName) {
             $interfaces[] = $this->_parentClassName;
@@ -128,7 +130,7 @@ class ClassAbstractMock {
             }
         }
 
-        $reflectionTrait = new \ReflectionClass('\\Mocka\\ClassTrait');
+        $reflectionTrait = new \ReflectionClass('\\Mocka\\ClassMockTrait');
         $methods = array_filter($methods, function (\ReflectionMethod $reflectionMethod) use ($reflectionTrait) {
             if ($reflectionMethod->isConstructor()) {
                 return false;
@@ -145,22 +147,5 @@ class ClassAbstractMock {
             return true;
         });
         return $methods;
-    }
-
-    /**
-     * @param string $parentClassName
-     * @param array  $interfaces
-     * @param array  $traits
-     * @return null|string
-     */
-    public static function getClassName($parentClassName, array $interfaces, array $traits) {
-        sort($interfaces);
-        $mergedInterfaces = array_merge([$parentClassName], $interfaces, $traits);
-        $mergedInterfaces = array_filter($mergedInterfaces);
-        $hash = join(',', $mergedInterfaces);
-        if (!array_key_exists($hash, self::$_mocks)) {
-            self::$_mocks[$hash] = new self($parentClassName, $interfaces, $traits);
-        }
-        return self::$_mocks[$hash]->_className;
     }
 }

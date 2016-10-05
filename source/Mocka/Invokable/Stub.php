@@ -1,8 +1,10 @@
 <?php
 
-namespace Mocka;
+namespace Mocka\Invokable;
 
-class FunctionMock {
+use Mocka\Invocation;
+
+class Stub extends AbstractInvokable {
 
     /** @var \Closure */
     private $_defaultClosure;
@@ -10,14 +12,11 @@ class FunctionMock {
     /** @var \Closure[] */
     private $_orderedClosures;
 
-    /** @var Invocations */
-    private $_invocations;
-
     public function __construct() {
-        $this->_orderedClosures = array();
+        $this->_orderedClosures = [];
         $this->_defaultClosure = function () {
         };
-        $this->_invocations = new Invocations();
+        parent::__construct();
     }
 
     /**
@@ -44,67 +43,18 @@ class FunctionMock {
         return $this;
     }
 
-    /**
-     * @param array|null $arguments
-     * @return mixed
-     */
-    public function invoke(array $arguments = null) {
-        $arguments = (array) $arguments;
+    protected function _invoke(Invocation $invocation) {
+        $arguments = $invocation->getArguments();
         $closure = $this->_getClosure($this->getInvocations()->getCount());
-
-        $invocation = new Invocation($arguments);
-        $this->getInvocations()->add($invocation);
         $result = call_user_func_array($closure, $arguments);
-
         $invocation->setReturnValue($result);
-        return $result;
-    }
-
-    /**
-     * @return Invocations
-     */
-    public function getInvocations() {
-        return $this->_invocations;
-    }
-
-    /**
-     * @return Invocations
-     */
-    public function getCalls() {
-        return $this->getInvocations();
-    }
-
-    /**
-     * @param int $number
-     * @return Invocation
-     */
-    public function getCall($number) {
-        return $this->getCalls()->get($number);
-    }
-
-    /**
-     * @return Invocation
-     */
-    public function getLastCall() {
-        return $this->getInvocations()->getLast();
-    }
-
-    /**
-     * @return int
-     */
-    public function getCallCount() {
-        return $this->getInvocations()->getCount();
-    }
-
-    public function __invoke() {
-        return $this->invoke(func_get_args());
     }
 
     /**
      * @param int $at
      * @return \Closure
      */
-    private function _getClosure($at) {
+    protected function _getClosure($at) {
         $at = (int) $at;
         if (array_key_exists($at, $this->_orderedClosures)) {
             return $this->_orderedClosures[$at];
@@ -116,7 +66,7 @@ class FunctionMock {
      * @param mixed|\Closure $body
      * @return \Closure
      */
-    private function _normalizeBody($body) {
+    protected function _normalizeBody($body) {
         $closure = $body;
         if (!$closure instanceof \Closure) {
             $closure = function () use ($body) {
@@ -125,4 +75,5 @@ class FunctionMock {
         }
         return $closure;
     }
+
 }

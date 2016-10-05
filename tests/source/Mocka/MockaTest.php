@@ -25,9 +25,9 @@ class MockaTest extends \PHPUnit_Framework_TestCase {
 
     public function testIntegrated() {
         $mocka = new Mocka();
-        $classMock = $mocka->mockClass('\\Mocka\\Mocka');
+        $classMock = $mocka->mockClass('\\MockaMocks\\AbstractClass');
 
-        $classMock->mockMethod('nonexistentMethod')
+        $classMock->mockMethod('bar')
             ->set(function ($foo) {
                 return $foo;
             })
@@ -35,14 +35,14 @@ class MockaTest extends \PHPUnit_Framework_TestCase {
                 return 'bar';
             });
 
-        $object = $classMock->newInstance();
-        $this->assertSame('foo', $object->nonexistentMethod('foo'));
-        $this->assertSame('bar', $object->nonexistentMethod('foo'));
-        $this->assertSame('zoo', $object->nonexistentMethod('zoo'));
-        $this->assertSame('bar', $object->nonexistentMethod('foo'));
+        $object = $classMock->newInstanceWithoutConstructor();
+        $this->assertSame('foo', $object->bar('foo'));
+        $this->assertSame('bar', $object->bar('foo'));
+        $this->assertSame('zoo', $object->bar('zoo'));
+        $this->assertSame('bar', $object->bar('foo'));
     }
 
-    public function testMultiInheritance() {
+    public function testSubsequentInheritance() {
         $mocka = new Mocka();
         $mockClass = $mocka->mockClass('\\Mocka\\Mocka');
         $mockClass->mockMethod('foo')->set(function() {

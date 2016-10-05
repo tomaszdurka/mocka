@@ -4,6 +4,9 @@ namespace Mocka;
 
 class Invocation {
 
+    /** @var mixed|null */
+    private $_context;
+
     /** @var array */
     private $_arguments;
 
@@ -11,9 +14,11 @@ class Invocation {
     private $_returnValue;
 
     /**
-     * @param array $arguments
+     * @param mixed|null $context
+     * @param array      $arguments
      */
-    public function __construct(array $arguments) {
+    public function __construct($context, array $arguments) {
+        $this->_context = $context;
         $this->_arguments = $arguments;
     }
 
@@ -29,6 +34,13 @@ class Invocation {
      */
     public function getReturnValue() {
         return $this->_returnValue;
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function getContext() {
+        return $this->_context;
     }
 
     /**
