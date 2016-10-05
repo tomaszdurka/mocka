@@ -2,7 +2,7 @@
 
 namespace MockaTests;
 
-use Mocka\Invokable\Stub;
+use \Mocka\Invokables\Invokable\Stub;
 use Mocka\Mocka;
 
 class StubTest extends \PHPUnit_Framework_TestCase {

@@ -3,7 +3,7 @@
 namespace Mocka\Overrides\MethodOverrides;
 
 use Mocka\Exception;
-use Mocka\Invokable\Stub;
+use Mocka\Invokables\Invokable\Stub;
 use Mocka\Overrides\Context\AbstractContext;
 use Mocka\Overrides\Manager;
 use Mocka\Overrides\Override;

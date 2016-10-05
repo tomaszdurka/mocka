@@ -2,7 +2,7 @@
 
 namespace Mocka\Overrides;
 
-use Mocka\Invokable\AbstractInvokable;
+use Mocka\Invokables\Invokable\AbstractInvokable;
 use Mocka\Overrides\Context\AbstractContext;
 
 class Override {

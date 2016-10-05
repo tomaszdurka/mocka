@@ -1,8 +1,8 @@
 <?php
 
-namespace Mocka\Invokable;
+namespace Mocka\Invokables\Invokable;
 
-use Mocka\Invocation;
+use Mocka\Invokables\Invocation;
 
 class Stub extends AbstractInvokable {
 

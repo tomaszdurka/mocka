@@ -1,6 +1,8 @@
 <?php
 
-namespace Mocka;
+namespace Mocka\Invokables;
+
+use Mocka\Exception;
 
 class Invocations {
 

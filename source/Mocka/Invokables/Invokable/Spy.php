@@ -1,9 +1,9 @@
 <?php
 
-namespace Mocka\Invokable;
+namespace Mocka\Invokables\Invokable;
 
 use Mocka\Exception;
-use Mocka\Invocation;
+use Mocka\Invokables\Invocation;
 use ReflectionFunctionAbstract;
 
 class Spy extends AbstractInvokable {

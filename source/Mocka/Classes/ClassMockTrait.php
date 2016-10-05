@@ -3,7 +3,7 @@
 namespace Mocka\Classes;
 
 use Mocka\Exception;
-use Mocka\Invokable\AbstractInvokable;
+use Mocka\Invokables\Invokable\AbstractInvokable;
 use Mocka\Overrides\MethodOverrides\ClassOverrides;
 use Mocka\Overrides\MethodOverrides\InstanceOverrides;
 use Mocka\Overrides\Manager;

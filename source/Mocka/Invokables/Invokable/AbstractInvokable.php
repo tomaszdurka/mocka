@@ -1,9 +1,9 @@
 <?php
 
-namespace Mocka\Invokable;
+namespace Mocka\Invokables\Invokable;
 
-use Mocka\Invocation;
-use Mocka\Invocations;
+use Mocka\Invokables\Invocation;
+use Mocka\Invokables\Invocations;
 
 abstract class AbstractInvokable {
 

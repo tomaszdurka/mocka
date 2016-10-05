@@ -1,6 +1,6 @@
 <?php
 
-namespace Mocka;
+namespace Mocka\Invokables;
 
 class Invocation {
 

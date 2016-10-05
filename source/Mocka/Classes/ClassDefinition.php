@@ -2,9 +2,9 @@
 
 namespace Mocka\Classes;
 
-use Mocka\Invokable\AbstractInvokable;
-use Mocka\Invokable\Spy;
-use Mocka\Invokable\Stub;
+use Mocka\Invokables\Invokable\AbstractInvokable;
+use Mocka\Invokables\Invokable\Spy;
+use Mocka\Invokables\Invokable\Stub;
 
 class ClassDefinition {
 
