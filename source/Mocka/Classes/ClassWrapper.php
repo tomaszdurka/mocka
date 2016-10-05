@@ -1,10 +1,11 @@
 <?php
 
-namespace Mocka;
+namespace Mocka\Classes;
 
 use CodeGenerator\ClassBlock;
 use CodeGenerator\MethodBlock;
 use CodeGenerator\TraitBlock;
+use Mocka\OverridableInterface;
 
 class ClassWrapper {
 
@@ -60,7 +61,7 @@ class ClassWrapper {
             }
             $class->addUse($trait);
         }
-        $class->addUse(new TraitBlock('\Mocka\ClassMockTrait'));
+        $class->addUse(new TraitBlock('\Mocka\Classes\ClassMockTrait'));
 
         $mockableMethods = $this->_getMockableMethods();
         foreach ($mockableMethods as $reflectionMethod) {
@@ -129,7 +130,7 @@ class ClassWrapper {
             }
         }
 
-        $reflectionTrait = new \ReflectionClass('\\Mocka\\ClassMockTrait');
+        $reflectionTrait = new \ReflectionClass('\\Mocka\\Classes\\ClassMockTrait');
         $methods = array_filter($methods, function (\ReflectionMethod $reflectionMethod) use ($reflectionTrait) {
             if ($reflectionMethod->isConstructor()) {
                 return false;

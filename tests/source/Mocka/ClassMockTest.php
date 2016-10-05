@@ -2,9 +2,9 @@
 
 namespace MockaTests\Mocka;
 
-use Mocka\ClassMock;
-use Mocka\ClassMockFactory;
-use Mocka\ClassMockTrait;
+use Mocka\Classes\ClassMock;
+use Mocka\Classes\ClassMockFactory;
+use Mocka\Classes\ClassMockTrait;
 use MockaMocks\AbstractClass;
 
 

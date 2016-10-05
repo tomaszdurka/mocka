@@ -2,6 +2,10 @@
 
 namespace Mocka;
 
+use Mocka\Classes\ClassMock;
+use Mocka\Classes\ClassMockFactory;
+use Mocka\Classes\ClassMockTrait;
+
 trait MockaTrait {
 
     /**
@@ -36,7 +40,7 @@ trait MockaTrait {
     /**
      * @param string     $parentClassName
      * @param array|null $constructorArgs
-     * @return \Mocka\ClassMockTrait
+     * @return ClassMockTrait
      */
     public function mockObject($parentClassName = null, array $constructorArgs = null) {
         return $this->mockClass($parentClassName)->newInstance($constructorArgs);

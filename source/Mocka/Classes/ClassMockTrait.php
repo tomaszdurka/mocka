@@ -1,7 +1,8 @@
 <?php
 
-namespace Mocka;
+namespace Mocka\Classes;
 
+use Mocka\Exception;
 use Mocka\Invokable\AbstractInvokable;
 use Mocka\Overrides\MethodOverrides\ClassOverrides;
 use Mocka\Overrides\MethodOverrides\InstanceOverrides;

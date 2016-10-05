@@ -1,6 +1,6 @@
 <?php
 
-namespace Mocka;
+namespace Mocka\Classes;
 
 use Mocka\Invokable\AbstractInvokable;
 use Mocka\Invokable\Spy;

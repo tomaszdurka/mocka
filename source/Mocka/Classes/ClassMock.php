@@ -1,8 +1,9 @@
 <?php
 
-namespace Mocka;
+namespace Mocka\Classes;
 
 use CodeGenerator\ClassBlock;
+use Mocka\Exception;
 use Mocka\Invokable\Stub;
 use Mocka\Overrides\Manager;
 use Mocka\Overrides\MethodOverrides\ClassOverrides;
@@ -59,7 +60,7 @@ class ClassMock {
 
     /**
      * @param array|null $constructorArgs
-     * @return \Mocka\ClassMockTrait
+     * @return ClassMockTrait
      */
     public function newInstance(array $constructorArgs = null) {
         $constructorArgs = (array) $constructorArgs;
@@ -68,7 +69,7 @@ class ClassMock {
     }
 
     /**
-     * @return \Mocka\ClassMockTrait
+     * @return ClassMockTrait
      */
     public function newInstanceWithoutConstructor() {
         $mockedClassReflection = new \ReflectionClass($this->getClassName());
