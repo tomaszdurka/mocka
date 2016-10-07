@@ -2,12 +2,13 @@
 
 namespace MockaTests;
 
-use Mocka\FunctionMock;
+use \Mocka\Invokables\Invokable\Stub;
+use Mocka\Mocka;
 
-class FunctionMockTest extends \PHPUnit_Framework_TestCase {
+class StubTest extends \PHPUnit_Framework_TestCase {
 
     public function testIntegrated() {
-        $method = new FunctionMock();
+        $method = new Stub();
         $method->set(function () {
             return 'foo';
         });
@@ -18,24 +19,24 @@ class FunctionMockTest extends \PHPUnit_Framework_TestCase {
             return 'zoo';
         });
 
-        $this->assertSame('foo', $method->invoke());
-        $this->assertSame('bar', $method->invoke());
-        $this->assertSame('zoo', $method->invoke());
-        $this->assertSame('foo', $method->invoke());
+        $this->assertSame('foo', $method->invoke('context', []));
+        $this->assertSame('bar', $method->invoke('context', []));
+        $this->assertSame('zoo', $method->invoke('context', []));
+        $this->assertSame('foo', $method->invoke('context', []));
 
         $method->set(function () {
             return 'def';
         });
-        $this->assertSame('def', $method->invoke());
-        $this->assertSame('zoo', $method->invoke());
+        $this->assertSame('def', $method->invoke('context', []));
+        $this->assertSame('zoo', $method->invoke('context', []));
     }
 
     public function testAssertingArguments() {
-        $method = new FunctionMock();
+        $method = new Stub();
         $method->set(function($foo) {
             $this->assertSame('bar', $foo);
         });
-        $method->invoke(['bar']);
+        $method->invoke('context', ['bar']);
     }
 
     /**
@@ -43,22 +44,16 @@ class FunctionMockTest extends \PHPUnit_Framework_TestCase {
      * @expectedExceptionMessage must be an instance of Mocka
      */
     public function testTypeHinting() {
-        $method = new FunctionMock();
-        $method->set(function (\Mocka $mocka) {
+        $method = new Stub();
+        $method->set(function (Mocka $mocka) {
         });
-        $method->invoke(['Invalid arg']);
+        $method->invoke('context',['Invalid arg']);
     }
 
     public function testGetCallCount() {
-        $method = new FunctionMock();
+        $method = new Stub();
         $this->assertSame(0, $method->getCallCount());
-        $method->invoke();
+        $method->invoke('context', []);
         $this->assertSame(1, $method->getCallCount());
-    }
-
-    public function testCallable() {
-        $method = new FunctionMock();
-        $method->set('foo');
-        $this->assertSame('foo', $method());
     }
 }
