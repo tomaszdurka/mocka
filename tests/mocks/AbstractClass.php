@@ -14,10 +14,14 @@ abstract class AbstractClass implements InterfaceMock{
     }
 
     public function bar() {
-        return 'bar';
+        return static::jar();
     }
 
     public final function zoo() {
+    }
+
+    public function getCalledClass() {
+        return get_called_class();
     }
 
     protected function _foo(){

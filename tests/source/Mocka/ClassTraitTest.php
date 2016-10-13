@@ -24,7 +24,7 @@ class ClassTraitTest extends \PHPUnit_Framework_TestCase {
         /** @var \MockaMocks\AbstractClass|\Mocka\Classes\ClassMockTrait $object */
         $object = $mockClass->newInstanceWithoutConstructor();
         $this->assertNull($object->foo());
-        $this->assertSame('bar', $object->bar());
+        $this->assertSame('jar', $object->bar());
 
         $mockClass->mockMethod('foo')->set(function () {
             return 'foo';
