@@ -32,7 +32,7 @@ EOD;
         /** @var ClassMockTrait|AbstractClass $object */
         $object = $classMock->newInstanceWithoutConstructor();
 
-        $this->assertSame('bar', $object->bar());
+        $this->assertSame('jar', $object->bar());
 
         $classMock->mockMethod('bar')->set(function () {
             return 'foo';
@@ -47,13 +47,13 @@ EOD;
         /** @var ClassMockTrait|AbstractClass $object */
         $object = $classMock->newInstanceWithoutConstructor();
 
-        $this->assertSame('bar', $object->bar());
+        $this->assertSame('jar', $object->bar());
 
         $classMock->mockMethod('bar');
         $this->assertSame(null, $object->bar());
 
         $classMock->unmockMethod('bar');
-        $this->assertSame('bar', $object->bar());
+        $this->assertSame('jar', $object->bar());
     }
 
     public function testMockMethodFromTrait() {
@@ -68,6 +68,15 @@ EOD;
         $this->assertSame(null, $object->bar());
     }
 
+    public function testGetCalledClass() {
+        $factory = new ClassMockFactory();
+        $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
+        /** @var AbstractClass $object */
+        $object = $classMock->newInstanceWithoutConstructor();
+
+        $this->assertSame($classMock->getClassName(), $object->getCalledClass());
+    }
+
     public function testMockStaticMethod() {
         $factory = new ClassMockFactory();
         $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
@@ -78,6 +87,19 @@ EOD;
             return 'foo';
         });
         $this->assertSame('foo', $className::jar());
+    }
+
+    public function testMockStaticMethodCalledFromOther() {
+        $factory = new ClassMockFactory();
+        $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
+        /** @var AbstractClass $object */
+        $object = $classMock->newInstanceWithoutConstructor();
+
+        $this->assertSame('jar', $object->bar());
+        $classMock->mockMethod('jar')->set(function () {
+            return 'foo';
+        });
+        $this->assertSame('foo', $object->bar());
     }
 
     public function testNewInstanceConstructorArgs() {

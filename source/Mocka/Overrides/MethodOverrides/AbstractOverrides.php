@@ -36,7 +36,7 @@ abstract class AbstractOverrides {
 
     /**
      * @param string $methodName
-     * @return Override
+     * @return \Mocka\Invokables\Invokable\AbstractInvokable
      * @throws Exception
      */
     public function get($methodName) {
@@ -44,7 +44,7 @@ abstract class AbstractOverrides {
         if (!$override) {
             throw new Exception('Override not found');
         }
-        return $override;
+        return $override->getInvokable();
     }
 
     /**
@@ -77,10 +77,7 @@ abstract class AbstractOverrides {
         $context = $this->_createContext($methodName);
         $this->_manager->removeByContext($context);
         
-        $classDefinition = new ClassDefinition(get_parent_class($context->getClassName()));
-        $originalMethodReflection = $classDefinition->findOriginalMethodReflection($methodName);
-        $invokable = new Spy($originalMethodReflection);
-        
+        $invokable = new Spy();
         $override = new Override($context, $invokable);
         $this->_manager->add($override);
         return $invokable;

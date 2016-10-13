@@ -29,7 +29,7 @@ class Stub extends AbstractInvokable {
     }
 
     /**
-     * @param int|int[] $at
+     * @param int|int[]       $at
      * @param string|\Closure $body
      * @return static
      */
@@ -43,11 +43,18 @@ class Stub extends AbstractInvokable {
         return $this;
     }
 
-    protected function _invoke(Invocation $invocation) {
-        $arguments = $invocation->getArguments();
+    /**
+     * @param mixed|null $context
+     * @param array      $arguments
+     * @return mixed|null
+     */
+    public function invoke($context, array $arguments) {
+        $invocation = new Invocation($context, $arguments);
         $closure = $this->_getClosure($this->getInvocations()->getCount());
         $result = call_user_func_array($closure, $arguments);
         $invocation->setReturnValue($result);
+        $this->getInvocations()->add($invocation);
+        return $result;
     }
 
     /**
@@ -75,5 +82,4 @@ class Stub extends AbstractInvokable {
         }
         return $closure;
     }
-
 }
