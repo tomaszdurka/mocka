@@ -24,6 +24,10 @@ class $className extends $parentClassName implements \Mocka\Overrides\Overridabl
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 
+    public function getCalledClass() {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
     protected function _foo() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }

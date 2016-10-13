@@ -21,35 +21,25 @@ class ClassDefinition {
 
     /**
      * @param string $methodName
-     * @return AbstractInvokable|null
+     * @return Callable|null
      */
     public function findOriginalMethod($methodName) {
-        $method = $this->findOriginalMethodReflection($methodName);
-        if ($method) {
-            if ($method->isAbstract()) {
-                return new Stub();
-            } else {
-                return new Spy($method);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @param string $methodName
-     * @return \ReflectionMethod|null
-     */
-    public function findOriginalMethodReflection($methodName) {
         $class = new \ReflectionClass($this->_className);
 
         $traitAliasName = '_mockaTraitAlias_' . $methodName;
         if ($class->hasMethod($traitAliasName)) {
-            return $class->getMethod($traitAliasName);
+            if ($class->getMethod($traitAliasName)->isAbstract()) {
+                return function () {};
+            }
+            return ['self', $traitAliasName];
         }
 
         $parentClass = $this->_findOriginalParentClass($class);
         if ($parentClass && $parentClass->hasMethod($methodName)) {
-            return $parentClass->getMethod($methodName);
+            if ($parentClass->getMethod($methodName)->isAbstract()) {
+                return function () {};
+            }
+            return ['parent', $methodName];
         }
 
         return null;

@@ -3,7 +3,8 @@
 namespace Mocka\Classes;
 
 use Mocka\Exception;
-use Mocka\Invokables\Invokable\AbstractInvokable;
+use Mocka\Invokables\Invokable\Spy;
+use Mocka\Invokables\Invokable\Stub;
 use Mocka\Overrides\MethodOverrides\ClassOverrides;
 use Mocka\Overrides\MethodOverrides\InstanceOverrides;
 use Mocka\Overrides\Manager;
@@ -20,7 +21,7 @@ trait ClassMockTrait {
 
     /**
      * @param string $name
-     * @return AbstractInvokable
+     * @return Stub
      * @deprecated
      */
     public function mockMethod($name) {
@@ -36,26 +37,41 @@ trait ClassMockTrait {
     }
 
     /**
-     * @param string     $name
-     * @param array      $arguments
+     * @param string $name
+     * @param array  $arguments
      * @return mixed
      * @throws Exception
      */
     private function _callMethod($name, array $arguments) {
-        $override = $this->getOverrides()->find($name);
-        if ($override) {
-            return $override->getInvokable()->invoke($this, $arguments);
-        }
         $classDefinition = new ClassDefinition(__CLASS__);
         $originalMethod = $classDefinition->findOriginalMethod($name);
-        if ($originalMethod) {
-            return $originalMethod->invoke($this, $arguments);
+
+        $override = $this->getOverrides()->find($name);
+        
+        
+        if ($override) {
+            $invokable = $override->getInvokable();
+            if ($invokable instanceof Spy) {
+                $returnValue = null;
+                if ($originalMethod) {
+                    $returnValue = call_user_func_array($originalMethod, $arguments);
+                }
+                $invokable->addInvocation($this, $arguments, $returnValue);
+                return $returnValue;
+            } 
+            if ($invokable instanceof Stub) {
+                return $invokable->invoke($this, $arguments);
+            }
+            throw new Exception('Unsupported invokable');
         }
+        if ($originalMethod) {
+            return call_user_func_array($originalMethod, $arguments);
+        }
+
         if ('__construct' === $name) {
             return null;
         }
-
-        throw new Exception('Cannot find method');
+        throw new Exception("Cannot find method {$name}");
     }
 
     /**
@@ -65,17 +81,30 @@ trait ClassMockTrait {
      * @throws Exception
      */
     private static function _callStaticMethod($name, array $arguments) {
-        $manager = Manager::getInstance();
-        $classOverrides = new ClassOverrides($manager, get_called_class());
-        $override = $classOverrides->find($name);
-        if ($override) {
-            return $override->getInvokable()->invoke(null, $arguments);
-        }
-
         $classDefinition = new ClassDefinition(get_called_class());
         $originalMethod = $classDefinition->findOriginalMethod($name);
+
+        $manager = Manager::getInstance();
+        $classOverrides = new ClassOverrides($manager, get_called_class());
+
+        $override = $classOverrides->find($name);
+        if ($override) {
+            $invokable = $override->getInvokable();
+            if ($invokable instanceof Spy) {
+                $returnValue = null;
+                if ($originalMethod) {
+                    $returnValue = call_user_func_array($originalMethod, $arguments);
+                }
+                $invokable->addInvocation(null, $arguments, $returnValue);
+                return $returnValue;
+            }
+            if ($invokable instanceof Stub) {
+                return $invokable->invoke(null, $arguments);
+            }
+            throw new Exception('Unsupported invokable');
+        }
         if ($originalMethod) {
-            return $originalMethod->invoke(null, $arguments);
+            return call_user_func_array($originalMethod, $arguments);
         }
         throw new Exception('Cannot find method');
     }
