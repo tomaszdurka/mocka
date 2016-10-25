@@ -49,7 +49,7 @@ class Stub extends AbstractInvokable {
      * @return mixed|null
      */
     public function invoke($context, array $arguments) {
-        foreach ($arguments as $i => $argument) {
+        foreach ($arguments as $i => &$argument) {
             $arguments[$i] = &$argument;
         }
         $invocation = new Invocation($context, $arguments);

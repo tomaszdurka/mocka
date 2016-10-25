@@ -43,7 +43,7 @@ trait ClassMockTrait {
      * @throws Exception
      */
     private function _callMethod($name, array $arguments) {
-        foreach ($arguments as $i => $argument) {
+        foreach ($arguments as $i => &$argument) {
             $arguments[$i] = &$argument;
         }
         $classDefinition = new ClassDefinition(__CLASS__);
@@ -83,7 +83,7 @@ trait ClassMockTrait {
      * @throws Exception
      */
     private static function _callStaticMethod($name, array $arguments) {
-        foreach ($arguments as $i => $argument) {
+        foreach ($arguments as $i => &$argument) {
             $arguments[$i] = &$argument;
         }
         $classDefinition = new ClassDefinition(get_called_class());
