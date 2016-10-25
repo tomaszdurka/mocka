@@ -43,12 +43,14 @@ trait ClassMockTrait {
      * @throws Exception
      */
     private function _callMethod($name, array $arguments) {
+        foreach ($arguments as $i => $argument) {
+            $arguments[$i] = &$argument;
+        }
         $classDefinition = new ClassDefinition(__CLASS__);
         $originalMethod = $classDefinition->findOriginalMethod($name);
 
         $override = $this->getOverrides()->find($name);
-        
-        
+
         if ($override) {
             $invokable = $override->getInvokable();
             if ($invokable instanceof Spy) {
@@ -58,7 +60,7 @@ trait ClassMockTrait {
                 }
                 $invokable->addInvocation($this, $arguments, $returnValue);
                 return $returnValue;
-            } 
+            }
             if ($invokable instanceof Stub) {
                 return $invokable->invoke($this, $arguments);
             }
@@ -81,6 +83,9 @@ trait ClassMockTrait {
      * @throws Exception
      */
     private static function _callStaticMethod($name, array $arguments) {
+        foreach ($arguments as $i => $argument) {
+            $arguments[$i] = &$argument;
+        }
         $classDefinition = new ClassDefinition(get_called_class());
         $originalMethod = $classDefinition->findOriginalMethod($name);
 
