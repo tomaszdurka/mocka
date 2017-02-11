@@ -21,9 +21,6 @@ class ClassWrapper {
     /** @var array */
     private $_traits;
 
-    /** @var ClassWrapper[] */
-    private static $_mocks = [];
-
     /**
      * @param string|null $parentClassName
      * @param array       $interfaces
@@ -68,7 +65,13 @@ class ClassWrapper {
         }
         
         if (!$skipTrait) {
-            $class->addUse(new TraitBlock('\Mocka\Classes\ClassMockTrait'));
+            $class->addUse(new TraitBlock(OverridableTrait::class));
+            if ($this->_parentClassName) {
+                $reflection = new \ReflectionClass($this->_parentClassName);
+                if (!$reflection->hasMethod('__clone') || !$reflection->getMethod('__clone')->isFinal()) {
+                    $class->addUse(new TraitBlock(OverridableCloneableTrait::class));
+                }
+            }
         }
 
         $mockableMethods = $this->_getMockableMethods();
@@ -138,7 +141,7 @@ class ClassWrapper {
             }
         }
 
-        $reflectionTrait = new \ReflectionClass('\\Mocka\\Classes\\ClassMockTrait');
+        $reflectionTrait = new \ReflectionClass(OverridableTrait::class);
         $methods = array_filter($methods, function (\ReflectionMethod $reflectionMethod) use ($reflectionTrait) {
             if ($reflectionMethod->isConstructor()) {
                 return false;

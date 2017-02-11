@@ -4,7 +4,7 @@ namespace MockaTests\Mocka;
 
 use Mocka\Classes\ClassMock;
 use Mocka\Classes\ClassMockFactory;
-use Mocka\Classes\ClassMockTrait;
+use Mocka\Classes\OverridableTrait;
 use MockaMocks\AbstractClass;
 
 
@@ -29,7 +29,7 @@ EOD;
         $factory = new ClassMockFactory();
         $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
 
-        /** @var ClassMockTrait|AbstractClass $object */
+        /** @var OverridableTrait|AbstractClass $object */
         $object = $classMock->newInstanceWithoutConstructor();
 
         $this->assertSame('jar', $object->bar());
@@ -44,7 +44,7 @@ EOD;
         $factory = new ClassMockFactory();
         $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
 
-        /** @var ClassMockTrait|AbstractClass $object */
+        /** @var OverridableTrait|AbstractClass $object */
         $object = $classMock->newInstanceWithoutConstructor();
 
         $this->assertSame('jar', $object->bar());
@@ -60,7 +60,7 @@ EOD;
         $factory = new ClassMockFactory();
         $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass', null, ['\\MockaMocks\\TraitMock']);
 
-        /** @var ClassMockTrait|AbstractClass $object */
+        /** @var OverridableTrait|AbstractClass $object */
         $object = $classMock->newInstanceWithoutConstructor();
         $this->assertSame('traitbar', $object->bar());
 
