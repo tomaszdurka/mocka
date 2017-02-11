@@ -12,7 +12,7 @@ class ClassWrapperTest extends \PHPUnit_Framework_TestCase {
         $classWrapper = new ClassWrapper($parentClassName, [], []);
         $className = $classWrapper->getClassName();
         $expectedMockCode = <<<EOD
-class $className extends $parentClassName implements \Mocka\Overrides\OverridableInterface {
+class $className extends $parentClassName {
 
     use \Mocka\Classes\ClassMockTrait;
 
@@ -57,7 +57,7 @@ EOD;
         $classWrapper = new ClassWrapper(null, [$parentInterfaceName], []);
         $className = $classWrapper->getClassName();
         $expectedMockCode = <<<EOD
-class $className implements $parentInterfaceName, \Mocka\Overrides\OverridableInterface {
+class $className implements $parentInterfaceName {
 
     use \Mocka\Classes\ClassMockTrait;
 
@@ -82,7 +82,7 @@ EOD;
         $classWrapper = new ClassWrapper(null, [], [$traitName]);
         $className = $classWrapper->getClassName();
         $expectedMockCode = <<<EOD
-class $className implements \Mocka\Overrides\OverridableInterface {
+class $className {
 
     use $traitName {
         traitMethod as _mockaTraitAlias_traitMethod;

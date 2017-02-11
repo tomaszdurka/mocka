@@ -7,13 +7,12 @@ use Mocka\Exception;
 use Mocka\Invokables\Invokable\Spy;
 use Mocka\Invokables\Invokable\Stub;
 use Mocka\Overrides\Context\AbstractContext;
-use Mocka\Overrides\Manager;
 use Mocka\Overrides\Override;
 
 abstract class AbstractOverrides {
 
-    /** @var Manager */
-    protected $_manager;
+    /** @var Override[] */
+    protected $_overrides;
 
     /**
      * @param $methodName
@@ -27,11 +26,21 @@ abstract class AbstractOverrides {
      */
     abstract protected function _createContext($name);
 
+    public function __construct() {
+        $this->_overrides = [];
+    }
+
+    public function __clone() {
+        foreach ($this->_overrides as $key => $override) {
+            $this->_overrides[$key] = clone $override;
+        }
+    }
+
     /**
-     * @param Manager $manager
+     * @return Override[]
      */
-    public function __construct(Manager $manager) {
-        $this->_manager = $manager;
+    public function findAll() {
+        return $this->_overrides;
     }
 
     /**
@@ -51,8 +60,9 @@ abstract class AbstractOverrides {
      * @param string $methodName
      */
     public function remove($methodName) {
-        $context = $this->_createContext($methodName);
-        $this->_manager->removeByContext($context);
+        $this->_overrides = \Functional\reject($this->_overrides, function (Override $override) use ($methodName) {
+            return $override->getContext()->getMethodName() === $methodName;
+        });
     }
 
     /**
@@ -61,11 +71,9 @@ abstract class AbstractOverrides {
      */
     public function stub($methodName) {
         $context = $this->_createContext($methodName);
-        $this->_manager->removeByContext($context);
-        
         $invokable = new Stub();
         $override = new Override($context, $invokable);
-        $this->_manager->add($override);
+        $this->_add($override);
         return $invokable;
     }
 
@@ -75,11 +83,27 @@ abstract class AbstractOverrides {
      */
     public function spy($methodName) {
         $context = $this->_createContext($methodName);
-        $this->_manager->removeByContext($context);
-        
         $invokable = new Spy();
         $override = new Override($context, $invokable);
-        $this->_manager->add($override);
+        $this->_add($override);
         return $invokable;
+    }
+
+    /**
+     * @param Override $override
+     */
+    protected function _add(Override $override) {
+        $this->remove($override->getContext()->getMethodName());
+        $this->_overrides[] = $override;
+    }
+
+    /**
+     * @param string $methodName
+     * @return Override|null
+     */
+    protected function _find($methodName) {
+        return \Functional\first($this->_overrides, function (Override $override) use ($methodName) {
+            return $override->getContext()->getMethodName() === $methodName;
+        });
     }
 }

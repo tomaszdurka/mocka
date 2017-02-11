@@ -2,9 +2,6 @@
 
 namespace Mocka\Classes;
 
-use Mocka\Invokables\Invokable\AbstractInvokable;
-use Mocka\Invokables\Invokable\Spy;
-use Mocka\Invokables\Invokable\Stub;
 use Mocka\Overrides\OverridableInterface;
 
 class ClassDefinition {

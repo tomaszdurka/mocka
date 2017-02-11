@@ -19,7 +19,7 @@ class ClassMockTest extends \PHPUnit_Framework_TestCase {
         $expectedMockCode = <<<EOD
 namespace Nested\\FooNamespace;
 
-class FooClass extends $parentMockClassName {
+class FooClass extends $parentMockClassName implements \Mocka\Overrides\OverridableInterface {
 }
 EOD;
         $this->assertSame($expectedMockCode, $classMock->generateCode());

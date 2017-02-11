@@ -50,7 +50,6 @@ class ClassWrapper {
         foreach ($this->_interfaces as $interface) {
             $class->addInterface($interface);
         }
-        $class->addInterface(OverridableInterface::class);
         foreach ($this->_traits as $trait) {
             $reflectionTrait = new \ReflectionClass($trait);
             $trait = new TraitBlock($trait);
@@ -61,7 +60,16 @@ class ClassWrapper {
             }
             $class->addUse($trait);
         }
-        $class->addUse(new TraitBlock('\Mocka\Classes\ClassMockTrait'));
+
+        $skipTrait = false;
+        if ($this->_parentClassName)  {
+            $parentClass = new \ReflectionClass($this->_parentClassName);
+            $skipTrait = $parentClass->implementsInterface(OverridableInterface::class);
+        }
+        
+        if (!$skipTrait) {
+            $class->addUse(new TraitBlock('\Mocka\Classes\ClassMockTrait'));
+        }
 
         $mockableMethods = $this->_getMockableMethods();
         foreach ($mockableMethods as $reflectionMethod) {
