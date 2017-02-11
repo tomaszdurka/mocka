@@ -15,4 +15,9 @@ abstract class AbstractContext {
      */
     abstract public function getClassName();
 
+    /**
+     * @return string
+     */
+    abstract public function getMethodName();
+
 }

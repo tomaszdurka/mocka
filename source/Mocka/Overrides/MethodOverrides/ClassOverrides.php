@@ -4,7 +4,6 @@ namespace Mocka\Overrides\MethodOverrides;
 
 use Mocka\Overrides\Context\AbstractContext;
 use Mocka\Overrides\Context\ClassMethod;
-use Mocka\Overrides\Manager;
 use Mocka\Overrides\Override;
 use Mocka\Overrides\OverridableInterface;
 
@@ -14,21 +13,11 @@ class ClassOverrides extends AbstractOverrides {
     private $_className;
 
     /**
-     * @param Manager $manager
      * @param string  $className
      */
-    public function __construct(Manager $manager, $className) {
+    public function __construct($className) {
         $this->_className = $className;
-        parent::__construct($manager);
-    }
-
-    public function getParentClassOverrides() {
-        $class = new \ReflectionClass($this->_className);
-        $parentClass = $class->getParentClass();
-        if ($parentClass && $parentClass->implementsInterface(OverridableInterface::class)) {
-            return new ClassOverrides($this->_manager, $parentClass->getName());
-        }
-        return null;
+        parent::__construct();
     }
 
     /**
@@ -36,16 +25,26 @@ class ClassOverrides extends AbstractOverrides {
      * @return Override|null
      */
     public function find($methodName) {
-        $context = $this->_createContext($methodName);
-        $override = $this->_manager->findByContext($context);
-
+        $override = $this->_find($methodName);
         if ($override) {
             return $override;
         }
         
-        $parentClassOverrides = $this->getParentClassOverrides();
+        $parentClassOverrides = $this->_getParentClassOverrides();
         if ($parentClassOverrides) {
             return $parentClassOverrides->find($methodName);
+        }
+        return null;
+    }
+
+    /**
+     * @return ClassOverrides|null
+     */
+    protected function _getParentClassOverrides() {
+        $class = new \ReflectionClass($this->_className);
+        $parentClass = $class->getParentClass();
+        if ($parentClass && $parentClass->implementsInterface(OverridableInterface::class)) {
+            return $parentClass->getMethod('getClassOverrides')->invoke(null);
         }
         return null;
     }

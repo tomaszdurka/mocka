@@ -7,6 +7,7 @@ use Mocka\Exception;
 use Mocka\Invokables\Invokable\Stub;
 use Mocka\Overrides\Manager;
 use Mocka\Overrides\MethodOverrides\ClassOverrides;
+use Mocka\Overrides\OverridableInterface;
 
 class ClassMock {
 
@@ -19,8 +20,10 @@ class ClassMock {
     /** @var string|null */
     private $_parentClassName;
 
+    /** @var ClassOverrides */
+    private $_overrides;
+
     /**
-     * ClassMock constructor.
      * @param string      $wrapperClassName
      * @param string|null $className
      */
@@ -30,6 +33,7 @@ class ClassMock {
             $className = $wrapperClassName . '\\Mocka' . uniqid();
         }
         $this->_extractNameAndNamespace($className);
+        $this->_overrides = new ClassOverrides($this->getClassName());
     }
 
     /**
@@ -87,6 +91,7 @@ class ClassMock {
         if ($this->_parentClassName) {
             $class->setParentClassName($this->_parentClassName);
         }
+        $class->addInterface(OverridableInterface::class);
         return $class->dump();
     }
 
@@ -96,25 +101,21 @@ class ClassMock {
      * @return Stub
      */
     public function mockMethod($name) {
-        $manager = Manager::getInstance();
-        $classOverrides = new ClassOverrides($manager, $this->getClassName());
-        return $classOverrides->stub($name);
+        return $this->_overrides->stub($name);
     }
 
     /**
      * @param string $name
      */
     public function unmockMethod($name) {
-        $manager = Manager::getInstance();
-        $classOverrides = new ClassOverrides($manager, $this->getClassName());
-        $classOverrides->remove($name);
+        $this->_overrides->remove($name);
     }
-    
-    
 
     public function load() {
         $code = $this->generateCode();
         eval($code);
+        $class = new \ReflectionClass($this->getClassName());
+        $class->getMethod('setClassOverrides')->invoke(null, $this->_overrides);
     }
 
     /**
@@ -127,5 +128,9 @@ class ClassMock {
         if ($parts) {
             $this->_namespace = join('\\', $parts);
         }
+    }
+
+    public function getOverrides() {
+        return $this->_overrides;
     }
 }

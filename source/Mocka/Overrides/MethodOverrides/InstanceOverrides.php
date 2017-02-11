@@ -2,23 +2,21 @@
 
 namespace Mocka\Overrides\MethodOverrides;
 
-use Mocka\Overrides\Manager;
 use Mocka\Overrides\Context\AbstractContext;
 use Mocka\Overrides\Context\InstanceMethod;
 use Mocka\Overrides\Override;
 
 class InstanceOverrides extends AbstractOverrides {
-    
+
     /** @var mixed */
     private $_instance;
 
     /**
-     * @param Manager $manager
-     * @param mixed   $instance
+     * @param mixed          $instance
      */
-    public function __construct(Manager $manager, $instance) {
+    public function __construct($instance) {
         $this->_instance = $instance;
-        parent::__construct($manager);
+        parent::__construct();
     }
 
     /**
@@ -26,8 +24,7 @@ class InstanceOverrides extends AbstractOverrides {
      * @return Override|null
      */
     public function find($methodName) {
-        $context = $this->_createContext($methodName);
-        $override = $this->_manager->findByContext($context);
+        $override = $this->_find($methodName);
         if (!$override) {
             $override = $this->_getClassOverrides()->find($methodName);
         }
@@ -38,7 +35,11 @@ class InstanceOverrides extends AbstractOverrides {
      * @return ClassOverrides
      */
     protected function _getClassOverrides() {
-        return new ClassOverrides($this->_manager, get_class($this->_instance));
+//        $class = new \ReflectionClass($this->_instance);
+//        return $class->getMethod('getClassOverrides')->invoke(null);
+        
+        $className = get_class($this->_instance);
+        return $className::getClassOverrides();
     }
 
     /**

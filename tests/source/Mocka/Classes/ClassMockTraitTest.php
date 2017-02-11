@@ -1,10 +1,11 @@
 <?php
 
-namespace MockaTests\Mocka;
+namespace MockaTests\Mocka\Classes;
 
+use Mocka\Invokables\Invokable\AbstractInvokable;
 use Mocka\Mocka;
 
-class ClassTraitTest extends \PHPUnit_Framework_TestCase {
+class ClassMockTraitTest extends \PHPUnit_Framework_TestCase {
 
     public function testMockClass() {
         $mocka = new Mocka();
@@ -27,7 +28,7 @@ class ClassTraitTest extends \PHPUnit_Framework_TestCase {
         $this->assertSame('jar', $object->bar());
 
         $mockClass->mockMethod('foo')->set(function () {
-            return 'foo';
+            return 'foo'; 
         });
         $this->assertSame('foo', $object->foo());
 
@@ -43,5 +44,15 @@ class ClassTraitTest extends \PHPUnit_Framework_TestCase {
             return 'zoo';
         });
         $this->assertSame('bar', $object->foo());
+    }
+
+    public function testClone() {
+        $mocka = new Mocka();
+        $mockClass = $mocka->mockClass('\MockaMocks\AbstractClass');
+        $object = $mockClass->newInstanceWithoutConstructor();
+        $object->getOverrides()->stub('bar');
+        
+        $cloned = clone $object;
+        $this->assertInstanceOf(AbstractInvokable::class, $cloned->getOverrides()->get('bar'));
     }
 }

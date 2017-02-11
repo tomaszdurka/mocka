@@ -7,16 +7,37 @@ use Mocka\Invokables\Invokable\Spy;
 use Mocka\Invokables\Invokable\Stub;
 use Mocka\Overrides\MethodOverrides\ClassOverrides;
 use Mocka\Overrides\MethodOverrides\InstanceOverrides;
-use Mocka\Overrides\Manager;
 
 trait ClassMockTrait {
+    
+    /** @var InstanceOverrides */
+    private $_overrides;
+    
+    /** @var ClassOverrides */
+    public static $_classOverrides;
 
     /**
      * @return InstanceOverrides
      */
     public function getOverrides() {
-        $manager = Manager::getInstance();
-        return new InstanceOverrides($manager, $this);
+        if (null === $this->_overrides) {
+            $this->_overrides = new InstanceOverrides($this);
+        }
+        return $this->_overrides;
+    }
+
+    /**
+     * @return ClassOverrides
+     */
+    public static function getClassOverrides() {
+        return self::$_classOverrides;
+    }
+
+    /**
+     * @param ClassOverrides $classOverrides
+     */
+    public static function setClassOverrides(ClassOverrides $classOverrides) {
+        self::$_classOverrides = $classOverrides;
     }
 
     /**
@@ -36,6 +57,26 @@ trait ClassMockTrait {
         $this->getOverrides()->remove($name);
     }
 
+    public function __clone() {
+        $this->_overrides = clone $this->_overrides;
+    }
+
+    /**
+     * @param string $methodName
+     * @return Stub
+     */
+    public function stub($methodName) {
+        return $this->getOverrides()->stub($methodName);
+    }
+
+    /**
+     * @param string $methodName
+     * @return Spy
+     */
+    public function spy($methodName) {
+        return $this->getOverrides()->spy($methodName);
+    }
+
     /**
      * @param string $name
      * @param array  $arguments
@@ -47,8 +88,7 @@ trait ClassMockTrait {
         $originalMethod = $classDefinition->findOriginalMethod($name);
 
         $override = $this->getOverrides()->find($name);
-        
-        
+
         if ($override) {
             $invokable = $override->getInvokable();
             if ($invokable instanceof Spy) {
@@ -58,13 +98,15 @@ trait ClassMockTrait {
                 }
                 $invokable->addInvocation($this, $arguments, $returnValue);
                 return $returnValue;
-            } 
+            }
             if ($invokable instanceof Stub) {
                 return $invokable->invoke($this, $arguments);
             }
             throw new Exception('Unsupported invokable');
         }
         if ($originalMethod) {
+            if ('__construct' === $name) {
+            }
             return call_user_func_array($originalMethod, $arguments);
         }
 
@@ -83,9 +125,8 @@ trait ClassMockTrait {
     private static function _callStaticMethod($name, array $arguments) {
         $classDefinition = new ClassDefinition(get_called_class());
         $originalMethod = $classDefinition->findOriginalMethod($name);
-
-        $manager = Manager::getInstance();
-        $classOverrides = new ClassOverrides($manager, get_called_class());
+        
+        $classOverrides = self::getClassOverrides();
 
         $override = $classOverrides->find($name);
         if ($override) {
