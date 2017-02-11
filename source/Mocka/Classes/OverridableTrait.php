@@ -8,7 +8,7 @@ use Mocka\Invokables\Invokable\Stub;
 use Mocka\Overrides\MethodOverrides\ClassOverrides;
 use Mocka\Overrides\MethodOverrides\InstanceOverrides;
 
-trait ClassMockTrait {
+trait OverridableTrait {
     
     /** @var InstanceOverrides */
     private $_overrides;
@@ -57,10 +57,6 @@ trait ClassMockTrait {
         $this->getOverrides()->remove($name);
     }
 
-    public function __clone() {
-        $this->_overrides = clone $this->_overrides;
-    }
-
     /**
      * @param string $methodName
      * @return Stub
@@ -105,8 +101,6 @@ trait ClassMockTrait {
             throw new Exception('Unsupported invokable');
         }
         if ($originalMethod) {
-            if ('__construct' === $name) {
-            }
             return call_user_func_array($originalMethod, $arguments);
         }
 

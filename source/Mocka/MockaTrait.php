@@ -4,7 +4,7 @@ namespace Mocka;
 
 use Mocka\Classes\ClassMock;
 use Mocka\Classes\ClassMockFactory;
-use Mocka\Classes\ClassMockTrait;
+use Mocka\Classes\OverridableTrait;
 
 trait MockaTrait {
 
@@ -40,7 +40,7 @@ trait MockaTrait {
     /**
      * @param string     $parentClassName
      * @param array|null $constructorArgs
-     * @return ClassMockTrait
+     * @return OverridableTrait
      */
     public function mockObject($parentClassName = null, array $constructorArgs = null) {
         return $this->mockClass($parentClassName)->newInstance($constructorArgs);

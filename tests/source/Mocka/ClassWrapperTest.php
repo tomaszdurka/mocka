@@ -14,7 +14,9 @@ class ClassWrapperTest extends \PHPUnit_Framework_TestCase {
         $expectedMockCode = <<<EOD
 class $className extends $parentClassName {
 
-    use \Mocka\Classes\ClassMockTrait;
+    use Mocka\Classes\OverridableTrait;
+
+    use Mocka\Classes\OverridableCloneableTrait;
 
     public function foo() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
@@ -59,7 +61,7 @@ EOD;
         $expectedMockCode = <<<EOD
 class $className implements $parentInterfaceName {
 
-    use \Mocka\Classes\ClassMockTrait;
+    use Mocka\Classes\OverridableTrait;
 
     public function zoo() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
@@ -89,7 +91,7 @@ class $className {
         bar as _mockaTraitAlias_bar;
     }
 
-    use \Mocka\Classes\ClassMockTrait;
+    use Mocka\Classes\OverridableTrait;
 
     public function abstractTraitMethod() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
