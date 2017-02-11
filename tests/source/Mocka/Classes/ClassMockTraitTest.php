@@ -22,7 +22,7 @@ class ClassMockTraitTest extends \PHPUnit_Framework_TestCase {
     public function testCallMockedMethod() {
         $mocka = new Mocka();
         $mockClass = $mocka->mockClass('\MockaMocks\AbstractClass');
-        /** @var \MockaMocks\AbstractClass|\Mocka\Classes\ClassMockTrait $object */
+        /** @var \MockaMocks\AbstractClass|\Mocka\Classes\OverridableTrait $object */
         $object = $mockClass->newInstanceWithoutConstructor();
         $this->assertNull($object->foo());
         $this->assertSame('jar', $object->bar());
