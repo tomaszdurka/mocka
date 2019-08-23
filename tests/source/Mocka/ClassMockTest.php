@@ -6,10 +6,9 @@ use Mocka\Classes\ClassMock;
 use Mocka\Classes\ClassMockFactory;
 use Mocka\Classes\OverridableTrait;
 use MockaMocks\AbstractClass;
+use PHPUnit\Framework\TestCase;
 
-
-
-class ClassMockTest extends \PHPUnit_Framework_TestCase {
+class ClassMockTest extends TestCase {
 
     public function testGenerateCode() {
         $parentClassName = '\\MockaMocks\\AbstractClass';

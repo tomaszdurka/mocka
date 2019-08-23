@@ -4,8 +4,9 @@ namespace MockaTests\Mocka\Classes;
 
 use Mocka\Invokables\Invokable\AbstractInvokable;
 use Mocka\Mocka;
+use PHPUnit\Framework\TestCase;
 
-class ClassMockTraitTest extends \PHPUnit_Framework_TestCase {
+class ClassMockTraitTest extends TestCase {
 
     public function testMockClass() {
         $mocka = new Mocka();

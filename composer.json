@@ -6,7 +6,7 @@
     "lstrojny/functional-php": "^1.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "~3.7.10",
+    "phpunit/phpunit": "^8",
     "satooshi/php-coveralls": "~0.6.1"
   },
   "autoload": {
