@@ -2,10 +2,12 @@
 
 namespace MockaTests;
 
-use \Mocka\Invokables\Invokable\Stub;
+use Mocka\Invokables\Invokable\Stub;
 use Mocka\Mocka;
+use PHPUnit\Framework\TestCase;
+use TypeError;
 
-class StubTest extends \PHPUnit_Framework_TestCase {
+class StubTest extends TestCase {
 
     public function testIntegrated() {
         $method = new Stub();
@@ -39,11 +41,9 @@ class StubTest extends \PHPUnit_Framework_TestCase {
         $method->invoke('context', ['bar']);
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage must be an instance of Mocka
-     */
     public function testTypeHinting() {
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage('must be an instance of Mocka');
         $method = new Stub();
         $method->set(function (Mocka $mocka) {
         });

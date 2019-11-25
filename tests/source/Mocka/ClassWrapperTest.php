@@ -3,8 +3,9 @@
 namespace MockaTests\Mocka;
 
 use Mocka\Classes\ClassWrapper;
+use PHPUnit\Framework\TestCase;
 
-class ClassWrapperTest extends \PHPUnit_Framework_TestCase {
+class ClassWrapperTest extends TestCase {
 
     public function testGenerateCode() {
         $parentClassName = '\\MockaMocks\\AbstractClass';
