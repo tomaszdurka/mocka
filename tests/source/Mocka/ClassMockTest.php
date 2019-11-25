@@ -125,6 +125,7 @@ EOD;
     }
 
     public function testMockInternalClass() {
-        new ClassMock(null, 'DateTime');
+        $class = new ClassMock(null, 'DateTime');
+        $this->assertInstanceOf(ClassMock::class, $class);
     }
 }
