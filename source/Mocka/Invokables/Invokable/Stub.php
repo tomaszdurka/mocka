@@ -49,11 +49,11 @@ class Stub extends AbstractInvokable {
      * @return mixed|null
      */
     public function invoke($context, array $arguments) {
-        $invocation = new Invocation($context, $arguments);
         $closure = $this->_getClosure($this->getInvocations()->getCount());
+        $invocation = new Invocation($context, $arguments);
+        $this->getInvocations()->add($invocation);
         $result = call_user_func_array($closure, $arguments);
         $invocation->setReturnValue($result);
-        $this->getInvocations()->add($invocation);
         return $result;
     }
 

@@ -56,4 +56,22 @@ class StubTest extends TestCase {
         $method->invoke('context', []);
         $this->assertSame(1, $method->getCallCount());
     }
+
+    public function testAllInvocationsAreCounted() {
+        $method = new Stub();
+        $method->set(function () {
+            throw new \Exception();
+        });
+        $method->at(1, function () {
+            return 'bar';
+        });
+
+        try {
+            $method->invoke('context', []);
+            $this->fail('Did not throw an exception');
+        } catch (\Exception $e) {
+            $this->assertEquals(new \Exception(), $e);
+        }
+        $this->assertSame('bar', $method->invoke('context', []));
+    }
 }
