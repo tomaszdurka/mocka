@@ -2,7 +2,7 @@
   "name": "tomaszdurka/mocka",
   "license": "MIT",
   "require": {
-    "tomaszdurka/codegenerator": "~0.6.0",
+    "tomaszdurka/codegenerator": "dev-0.6.0-cm",
     "lstrojny/functional-php": "^1.0"
   },
   "require-dev": {
@@ -18,5 +18,11 @@
     "psr-4": {
       "MockaMocks\\":  "tests/mocks"
     }
-  }
+  },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/cargomedia/codegenerator"
+    }
+  ]
 }
