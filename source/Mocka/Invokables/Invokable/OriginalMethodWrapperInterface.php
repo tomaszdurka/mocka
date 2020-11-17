@@ -1,5 +1,5 @@
 <?php
 
-namespace Mocka\Invokable\Invokable;
+namespace Mocka\Invokables\Invokable;
 
 interface OriginalMethodWrapperInterface {};
