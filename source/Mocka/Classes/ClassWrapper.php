@@ -81,6 +81,7 @@ class ClassWrapper {
             $method->setParametersFromReflection($reflectionMethod);
             $method->setStaticFromReflection($reflectionMethod);
             $method->setVisibilityFromReflection($reflectionMethod);
+            $method->setReturnTypeFromReflection($reflectionMethod);
             if ($reflectionMethod->isStatic()) {
                 $method->extractFromClosure(function () {
                     return static::_callStaticMethod(__FUNCTION__, func_get_args());
