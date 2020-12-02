@@ -67,7 +67,7 @@ EOD;
 
     public function testMockReturnTypeMethodInvalidWrongReturnType() {
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('must be of the type integer');
+        $this->expectExceptionMessage('must be of the type int');
         $factory = new ClassMockFactory();
         $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
 
