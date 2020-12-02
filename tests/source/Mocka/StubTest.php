@@ -51,7 +51,7 @@ class StubTest extends TestCase {
 
     public function testReturnTypesInvalid() {
         $this->expectException(TypeError::class);
-        $this->expectExceptionMessage('must be of the type integer');
+        $this->expectExceptionMessage('must be of the type int');
         $method = new Stub();
         $method->set(function($foo): int {
             return (string) $foo;
