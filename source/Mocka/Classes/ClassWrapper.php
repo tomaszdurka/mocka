@@ -59,11 +59,11 @@ class ClassWrapper {
         }
 
         $skipTrait = false;
-        if ($this->_parentClassName)  {
+        if ($this->_parentClassName) {
             $parentClass = new \ReflectionClass($this->_parentClassName);
             $skipTrait = $parentClass->implementsInterface(OverridableInterface::class);
         }
-        
+
         if (!$skipTrait) {
             $class->addUse(new TraitBlock(OverridableTrait::class));
             if ($this->_parentClassName) {
@@ -82,14 +82,27 @@ class ClassWrapper {
             $method->setStaticFromReflection($reflectionMethod);
             $method->setVisibilityFromReflection($reflectionMethod);
             $method->setReturnTypeFromReflection($reflectionMethod);
+
             if ($reflectionMethod->isStatic()) {
-                $method->extractFromClosure(function () {
-                    return static::_callStaticMethod(__FUNCTION__, func_get_args());
-                });
+                if ($this->_isVoidReturnType($reflectionMethod)) {
+                    $method->extractFromClosure(function () {
+                        static::_callStaticMethod(__FUNCTION__, func_get_args());
+                    });
+                } else {
+                    $method->extractFromClosure(function () {
+                        return static::_callStaticMethod(__FUNCTION__, func_get_args());
+                    });
+                }
             } else {
-                $method->extractFromClosure(function () {
-                    return $this->_callMethod(__FUNCTION__, func_get_args());
-                });
+                if ($this->_isVoidReturnType($reflectionMethod)) {
+                    $method->extractFromClosure(function () {
+                        $this->_callMethod(__FUNCTION__, func_get_args());
+                    });
+                } else {
+                    $method->extractFromClosure(function () {
+                        return $this->_callMethod(__FUNCTION__, func_get_args());
+                    });
+                }
             }
             $class->addMethod($method);
         }
@@ -159,5 +172,20 @@ class ClassWrapper {
             return true;
         });
         return $methods;
+    }
+
+    /**
+     * @param \ReflectionMethod $method
+     * @return bool
+     */
+    protected function _isVoidReturnType(\ReflectionMethod $method): bool {
+        if (!$method->hasReturnType()) {
+            return false;
+        }
+        $returnType = $method->getReturnType();
+        if (!($returnType instanceof \ReflectionNamedType)) {
+            return false;
+        }
+        return $returnType->getName() === 'void';
     }
 }

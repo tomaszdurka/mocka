@@ -58,11 +58,24 @@ EOD;
         });
         $this->assertSame('fooBarString', $object->fooReturn());
 
-
         $classMock->mockMethod('fooReturn')->set(function (): int {
             return 234;
         });
         $this->assertSame('234', $object->fooReturn()); //casts to string
+    }
+
+    public function testMockVoidReturnType() {
+        $factory = new ClassMockFactory();
+        $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
+
+        /** @var OverridableTrait|AbstractClass $object */
+        $object = $classMock->newInstanceWithoutConstructor();
+
+        $voidMethod = $classMock->mockMethod('fooVoid')->set(function (): void {
+            //mocking `null` with `null` seems odd but we could assert something inside the method
+        });
+        $this->assertNull($object->fooVoid());
+        $this->assertSame(1, $voidMethod->getCallCount());
     }
 
     public function testMockReturnTypeMethodInvalidWrongReturnType() {

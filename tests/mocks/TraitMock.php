@@ -17,4 +17,7 @@ trait TraitMock {
     public function barReturnType(): string {
         return 'barbar';
     }
+
+    public function barVoid(): void {
+    }
 }

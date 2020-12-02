@@ -9,4 +9,6 @@ interface InterfaceMock {
     public function interfaceMethod();
 
     public function interfaceMethodReturn(): int;
+
+    public function interfaceMethodVoid(): void;
 }

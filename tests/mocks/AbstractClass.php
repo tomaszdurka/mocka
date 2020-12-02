@@ -32,6 +32,9 @@ abstract class AbstractClass implements InterfaceMock{
         return 2.3;
     }
 
+    public function fooVoid(): void {
+    }
+
     protected function _foo(){
     }
 
