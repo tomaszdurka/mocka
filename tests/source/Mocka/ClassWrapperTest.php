@@ -31,6 +31,18 @@ class $className extends $parentClassName {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 
+    public function fooReturn(): string {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
+    public function fooReturnOptional(): ?float {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
+    public function fooVoid(): void {
+        \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
     protected function _foo() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
@@ -45,6 +57,14 @@ class $className extends $parentClassName {
 
     public function interfaceMethod() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
+    public function interfaceMethodReturn(): int {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
+    public function interfaceMethodVoid(): void {
+        \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 
     public function __construct() {
@@ -72,6 +92,14 @@ class $className implements $parentInterfaceName {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 
+    public function interfaceMethodReturn(): int {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
+    public function interfaceMethodVoid(): void {
+        \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
     public function __construct() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
     }
@@ -90,6 +118,8 @@ class $className {
     use $traitName {
         traitMethod as _mockaTraitAlias_traitMethod;
         bar as _mockaTraitAlias_bar;
+        barReturnType as _mockaTraitAlias_barReturnType;
+        barVoid as _mockaTraitAlias_barVoid;
     }
 
     use Mocka\Classes\OverridableTrait;
@@ -104,6 +134,14 @@ class $className {
 
     public function bar() {
         return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
+    public function barReturnType(): string {
+        return \$this->_callMethod(__FUNCTION__, func_get_args());
+    }
+
+    public function barVoid(): void {
+        \$this->_callMethod(__FUNCTION__, func_get_args());
     }
 
     public function __construct() {

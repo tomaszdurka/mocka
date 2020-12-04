@@ -24,6 +24,17 @@ abstract class AbstractClass implements InterfaceMock{
         return get_called_class();
     }
 
+    public function fooReturn(): string {
+        return 'foo';
+    }
+
+    public function fooReturnOptional(): ?float {
+        return 2.3;
+    }
+
+    public function fooVoid(): void {
+    }
+
     protected function _foo(){
     }
 

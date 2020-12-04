@@ -39,6 +39,99 @@ EOD;
         $this->assertSame('foo', $object->bar());
     }
 
+    public function testMockReturnTypeMethod() {
+        $factory = new ClassMockFactory();
+        $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
+
+        /** @var OverridableTrait|AbstractClass $object */
+        $object = $classMock->newInstanceWithoutConstructor();
+
+        $this->assertSame('foo', $object->fooReturn());
+
+        $classMock->mockMethod('fooReturn')->set(function () {
+            return 'fooBar';
+        });
+        $this->assertSame('fooBar', $object->fooReturn());
+
+        $classMock->mockMethod('fooReturn')->set(function (): string {
+            return 'fooBarString';
+        });
+        $this->assertSame('fooBarString', $object->fooReturn());
+
+        $classMock->mockMethod('fooReturn')->set(function (): int {
+            return 234;
+        });
+        $this->assertSame('234', $object->fooReturn()); //casts to string
+    }
+
+    public function testMockVoidReturnType() {
+        $factory = new ClassMockFactory();
+        $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
+
+        /** @var OverridableTrait|AbstractClass $object */
+        $object = $classMock->newInstanceWithoutConstructor();
+
+        $voidMethod = $classMock->mockMethod('fooVoid')->set(function (): void {
+            //mocking `null` with `null` seems odd but we could assert something inside the method
+        });
+        $this->assertNull($object->fooVoid());
+        $this->assertSame(1, $voidMethod->getCallCount());
+    }
+
+    public function testMockReturnTypeMethodInvalidWrongReturnType() {
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('must be of the type int');
+        $factory = new ClassMockFactory();
+        $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
+
+        /** @var OverridableTrait|AbstractClass $object */
+        $object = $classMock->newInstanceWithoutConstructor();
+
+        $this->assertSame('foo', $object->fooReturn());
+
+        $classMock->mockMethod('fooReturn')->set(function (): int {
+            return 'fooBar123';
+        });
+        $object->fooReturn();
+    }
+
+    public function testMockReturnTypeMethodInvalidNull() {
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('must be of the type string, null returned');
+        $factory = new ClassMockFactory();
+        $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
+
+        /** @var OverridableTrait|AbstractClass $object */
+        $object = $classMock->newInstanceWithoutConstructor();
+
+        $this->assertSame('foo', $object->fooReturn());
+
+        $classMock->mockMethod('fooReturn')->set(function () {
+            return null;
+        });
+        $object->fooReturn();
+    }
+
+    public function testMockReturnTypeOptionalMethod() {
+        $factory = new ClassMockFactory();
+        $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
+
+        /** @var OverridableTrait|AbstractClass $object */
+        $object = $classMock->newInstanceWithoutConstructor();
+
+        $this->assertSame(2.3, $object->fooReturnOptional());
+
+        $classMock->mockMethod('fooReturnOptional')->set(function () {
+            return 1.1;
+        });
+        $this->assertSame(1.1, $object->fooReturnOptional());
+
+        $classMock->mockMethod('fooReturnOptional')->set(function () {
+            return null;
+        });
+        $this->assertNull($object->fooReturnOptional());
+    }
+
     public function testUnmockMethod() {
         $factory = new ClassMockFactory();
         $classMock = $factory->loadClassMock(null, '\\MockaMocks\\AbstractClass');
@@ -125,6 +218,7 @@ EOD;
     }
 
     public function testMockInternalClass() {
-        new ClassMock(null, 'DateTime');
+        $classMock = new ClassMock(null, 'DateTime');
+        $this->assertInstanceOf(ClassMock::class, $classMock);
     }
 }

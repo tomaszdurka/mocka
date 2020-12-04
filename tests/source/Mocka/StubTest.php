@@ -41,6 +41,24 @@ class StubTest extends TestCase {
         $method->invoke('context', ['bar']);
     }
 
+    public function testReturnTypes() {
+        $method = new Stub();
+        $method->set(function($foo): string {
+            return (string) $foo;
+        });
+        $this->assertSame('bar', $method->invoke('context', ['bar']));
+    }
+
+    public function testReturnTypesInvalid() {
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage('must be of the type int');
+        $method = new Stub();
+        $method->set(function($foo): int {
+            return (string) $foo;
+        });
+        $method->invoke('context', ['bar']);
+    }
+
     public function testTypeHinting() {
         $this->expectException(TypeError::class);
         $this->expectExceptionMessage('must be an instance of Mocka');

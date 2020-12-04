@@ -13,4 +13,11 @@ trait TraitMock {
     public function bar () {
         return 'traitbar';
     }
+
+    public function barReturnType(): string {
+        return 'barbar';
+    }
+
+    public function barVoid(): void {
+    }
 }
