@@ -3,7 +3,7 @@
   "license": "MIT",
   "require": {
     "php": ">=7.2.0",
-    "tomaszdurka/codegenerator": "dev-return_type-2",
+    "tomaszdurka/codegenerator": "0.7.0" ,
     "lstrojny/functional-php": "^1.0"
   },
   "require-dev": {
