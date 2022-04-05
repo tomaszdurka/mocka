@@ -3,8 +3,9 @@
 namespace MockaTests;
 
 use Mocka\Mocka;
+use PHPUnit\Framework\TestCase;
 
-class MockaTest extends \PHPUnit_Framework_TestCase {
+class MockaTest extends TestCase {
 
     public function testMockClass() {
         $mocka = new Mocka();
