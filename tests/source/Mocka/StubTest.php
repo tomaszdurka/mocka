@@ -51,7 +51,7 @@ class StubTest extends TestCase {
 
     public function testReturnTypesInvalid() {
         $this->expectException(TypeError::class);
-        $this->expectExceptionMessage('must be of the type int');
+        $this->expectExceptionMessage(' Return value must be of type int');
         $method = new Stub();
         $method->set(function($foo): int {
             return (string) $foo;
@@ -61,7 +61,7 @@ class StubTest extends TestCase {
 
     public function testTypeHinting() {
         $this->expectException(TypeError::class);
-        $this->expectExceptionMessage('must be an instance of Mocka');
+        $this->expectExceptionMessage('Argument #1 ($mocka) must be of type Mocka\Mocka, string given');
         $method = new Stub();
         $method->set(function (Mocka $mocka) {
         });
